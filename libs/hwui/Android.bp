@@ -169,7 +169,13 @@ cc_defaults {
             },
         },
     },
+<<<<<<< HEAD
     whole_program_vtables: true,
+=======
+    cflags: [
+        "-O3",
+    ],
+>>>>>>> 467a9e9d3fe1 (libhwui: Enable O3 when compiling with LTO)
 }
 
 // ------------------------
