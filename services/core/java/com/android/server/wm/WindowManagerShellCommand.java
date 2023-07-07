@@ -1345,12 +1345,6 @@ public class WindowManagerShellCommand extends ShellCommand {
 
         pw.println("  reset [-d DISPLAY_ID]");
         pw.println("    Reset all override settings.");
-        if (!IS_USER) {
-            pw.println("  tracing (start | stop)");
-            pw.println("    Start or stop window tracing.");
-            pw.println("  logging (start | stop | enable | disable | enable-text | disable-text)");
-            pw.println("    Logging settings.");
-        }
     }
 
     private void printLetterboxHelp(PrintWriter pw) {

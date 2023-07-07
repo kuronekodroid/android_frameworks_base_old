@@ -97,17 +97,6 @@ class WindowTracing {
     }
 
     void startTrace(@Nullable PrintWriter pw) {
-        if (IS_USER) {
-            logAndPrintln(pw, "Error: Tracing is not supported on user builds.");
-            return;
-        }
-        synchronized (mEnabledLock) {
-            ProtoLogImpl.getSingleInstance().startProtoLog(pw);
-            logAndPrintln(pw, "Start tracing to " + mTraceFile + ".");
-            mBuffer.resetBuffer();
-            mEnabled = mEnabledLockFree = true;
-        }
-        log("trace.enable");
     }
 
     /**
@@ -115,22 +104,6 @@ class WindowTracing {
      * @param pw Print writer
      */
     void stopTrace(@Nullable PrintWriter pw) {
-        if (IS_USER) {
-            logAndPrintln(pw, "Error: Tracing is not supported on user builds.");
-            return;
-        }
-        synchronized (mEnabledLock) {
-            logAndPrintln(pw, "Stop tracing to " + mTraceFile + ". Waiting for traces to flush.");
-            mEnabled = mEnabledLockFree = false;
-
-            if (mEnabled) {
-                logAndPrintln(pw, "ERROR: tracing was re-enabled while waiting for flush.");
-                throw new IllegalStateException("tracing enabled while waiting for flush.");
-            }
-            writeTraceToFileLocked();
-            logAndPrintln(pw, "Trace written to " + mTraceFile + ".");
-        }
-        ProtoLogImpl.getSingleInstance().stopProtoLog(pw, true);
     }
 
     /**
@@ -138,24 +111,6 @@ class WindowTracing {
      * @param pw Print writer
      */
     void saveForBugreport(@Nullable PrintWriter pw) {
-        if (IS_USER) {
-            logAndPrintln(pw, "Error: Tracing is not supported on user builds.");
-            return;
-        }
-        synchronized (mEnabledLock) {
-            if (!mEnabled) {
-                return;
-            }
-            mEnabled = mEnabledLockFree = false;
-            logAndPrintln(pw, "Stop tracing to " + mTraceFile + ". Waiting for traces to flush.");
-            writeTraceToFileLocked();
-            logAndPrintln(pw, "Trace written to " + mTraceFile + ".");
-            ProtoLogImpl.getSingleInstance().stopProtoLog(pw, true);
-            logAndPrintln(pw, "Start tracing to " + mTraceFile + ".");
-            mBuffer.resetBuffer();
-            mEnabled = mEnabledLockFree = true;
-            ProtoLogImpl.getSingleInstance().startProtoLog(pw);
-        }
     }
 
     private void setLogLevel(@WindowTraceLogLevel int logLevel, PrintWriter pw) {
