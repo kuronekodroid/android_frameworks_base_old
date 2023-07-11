@@ -31,6 +31,7 @@ android_app {
         enabled: true,
         optimize: true,
         shrink: true,
+        obfuscate: true,
         proguard_flags_files: ["proguard.flags"],
     },
     platform_apis: true,
