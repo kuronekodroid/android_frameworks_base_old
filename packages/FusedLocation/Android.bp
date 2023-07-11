@@ -43,6 +43,7 @@ android_app {
         enabled: true,
         optimize: true,
         shrink: true,
+        obfuscate: true,
     },
 }
 
