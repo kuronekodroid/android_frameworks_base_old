@@ -28,6 +28,9 @@ android_app {
     defaults: ["platform_app_defaults"],
     srcs: ["src/**/*.java"],
     optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
         proguard_flags_files: ["proguard.flags"],
     },
     platform_apis: true,

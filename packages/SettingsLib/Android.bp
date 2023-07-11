@@ -83,4 +83,9 @@ java_defaults {
         "androidx.legacy_legacy-preference-v14",
         "SettingsLib",
     ],
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+    },
 }

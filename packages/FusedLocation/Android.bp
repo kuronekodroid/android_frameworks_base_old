@@ -39,6 +39,11 @@ android_app {
     platform_apis: true,
     certificate: "platform",
     privileged: true,
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+    },
 }
 
 android_test {

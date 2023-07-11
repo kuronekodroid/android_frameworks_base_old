@@ -28,6 +28,9 @@ android_app {
         "src/**/*.kt",
     ],
     optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
         proguard_flags_files: ["proguard.flags"],
     },
     target_sdk_version: "29",
