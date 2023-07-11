@@ -37,7 +37,9 @@ android_app {
         "SettingsLibDisplayDensityUtils",
     ],
     optimize: {
-        proguard_flags_files: ["proguard.flags"],
+        enabled: true,
+        optimize: true,
+        shrink: true,
     },
     platform_apis: true,
     certificate: "platform",
