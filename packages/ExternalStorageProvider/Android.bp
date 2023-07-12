@@ -13,6 +13,13 @@ android_app {
 
     manifest: "AndroidManifest.xml",
 
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+    },
+
     resource_dirs: [
         "res",
     ],

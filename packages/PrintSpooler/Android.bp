@@ -37,6 +37,12 @@ android_app {
     resource_dirs: [],
     platform_apis: true,
     jni_libs: ["libprintspooler_jni"],
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+    },
     static_libs: [
         "PrintSpoolerLib",
     ],
