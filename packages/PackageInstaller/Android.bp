@@ -42,6 +42,13 @@ android_app {
     platform_apis: true,
     rename_resources_package: false,
 
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+    },
+
     static_libs: [
         "xz-java",
         "androidx.leanback_leanback",
