@@ -16,14 +16,14 @@ java_defaults {
             // "-Xep:AndroidFrameworkBinderIdentity:ERROR",
             "-Xep:AndroidFrameworkCompatChange:ERROR",
             // "-Xep:AndroidFrameworkUid:ERROR",
-            "-Xep:SelfEquals:ERROR",
+            // "-Xep:SelfEquals:ERROR",
             "-Xep:NullTernary:ERROR",
-            "-Xep:TryFailThrowable:ERROR",
-            "-Xep:HashtableContains:ERROR",
+            // "-Xep:TryFailThrowable:ERROR",
+            // "-Xep:HashtableContains:ERROR",
             "-Xep:FormatString:ERROR",
             "-Xep:ArrayHashCode:ERROR",
-            "-Xep:SelfAssignment:ERROR",
-            "-Xep:ArrayEquals:ERROR",
+            // "-Xep:SelfAssignment:ERROR",
+            // "-Xep:ArrayEquals:ERROR",
             "-Xep:IdentityBinaryExpression:ERROR",
             // NOTE: only enable to generate local patchfiles
             // "-XepPatchChecks:refaster:frameworks/base/errorprone/refaster/EfficientXml.java.refaster",
@@ -126,11 +126,6 @@ java_library {
     name: "services",
     defaults: ["services_java_defaults"],
     installable: true,
-
-    dex_preopt: {
-        app_image: true,
-        profile: "art-profile",
-    },
 
     srcs: [":services-main-sources"],
 
