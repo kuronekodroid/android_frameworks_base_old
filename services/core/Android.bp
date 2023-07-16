@@ -99,6 +99,12 @@ genrule {
 java_library_static {
     name: "services.core.unboosted",
     defaults: ["platform_service_defaults"],
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+    },
     srcs: [
         ":android.hardware.biometrics.face-V2-java-source",
         ":statslog-art-java-gen",
@@ -193,6 +199,12 @@ java_genrule {
 
 java_library {
     name: "services.core",
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+    },
     static_libs: ["services.core.priorityboosted"],
 }
 
