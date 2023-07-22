@@ -82,8 +82,6 @@ public class PixelPropsUtils {
         "com.google.android.apps.youtube.music"
     };
 
-<<<<<<< HEAD
-=======
     // Codenames for currently supported Pixels by Google
     private static final String[] pixelCodenames = {
             "cheetah",
@@ -101,7 +99,6 @@ public class PixelPropsUtils {
 
     private static volatile boolean sIsGms = false;
 
->>>>>>> 350f2dd1781f (PixelPropsUtils: Remove spoofing for currently supported Pixel devices)
     static {
         propsToKeep = new HashMap<>();
         propsToChange = new HashMap<>();
