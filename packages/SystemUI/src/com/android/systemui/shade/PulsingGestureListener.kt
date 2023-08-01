@@ -20,6 +20,9 @@ import android.content.Context
 import android.hardware.display.AmbientDisplayConfiguration
 import android.os.PowerManager
 import android.os.SystemClock
+import android.os.VibrationAttributes
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.Settings
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -62,10 +65,12 @@ class PulsingGestureListener @Inject constructor(
         dumpManager: DumpManager,
         context: Context
 ) : GestureDetector.SimpleOnGestureListener(), Dumpable {
+    private val vibrator: Vibrator
     private var doubleTapEnabled = false
     private var singleTapEnabled = false
     private var doubleTapEnabledNative = false
-
+    private var doubleTapVibrate = false
+    private var singleTapVibrate = false
     companion object {
         internal val DOUBLE_TAP_SLEEP_GESTURE =
             "lineagesystem:" + LineageSettings.System.DOUBLE_TAP_SLEEP_GESTURE
@@ -74,6 +79,8 @@ class PulsingGestureListener @Inject constructor(
     private val quickQsOffsetHeight: Int
 
     init {
+        vibrator = notificationShadeWindowView.getContext().getSystemService(
+                Context.VIBRATOR_SERVICE) as Vibrator
         val tunable = Tunable { key: String?, value: String? ->
             when (key) {
                 Settings.Secure.DOUBLE_TAP_TO_WAKE ->
@@ -86,6 +93,12 @@ class PulsingGestureListener @Inject constructor(
                             userTracker.userId)
                 DOUBLE_TAP_SLEEP_GESTURE ->
                     doubleTapToSleepEnabled = TunerService.parseIntegerSwitch(value, true)
+                Settings.Secure.DOZE_TAP_GESTURE_VIBRATE ->
+                    doubleTapVibrate = ambientDisplayConfiguration.tapGestureVibrate(
+                            userTracker.userId)
+                Settings.Secure.DOZE_DOUBLE_TAP_GESTURE_VIBRATE ->
+                    singleTapVibrate = ambientDisplayConfiguration.doubleTapGestureVibrate(
+                            userTracker.userId)
             }
         }
         tunerService.addTunable(tunable,
@@ -109,6 +122,7 @@ class PulsingGestureListener @Inject constructor(
             shadeLogger.logSingleTapUpFalsingState(proximityIsNotNear, isNotAFalseTap)
             if (proximityIsNotNear && isNotAFalseTap) {
                 shadeLogger.d("Single tap handled, requesting centralSurfaces.wakeUpIfDozing")
+                if (singleTapVibrate) wakeVibrate()
                 centralSurfaces.wakeUpIfDozing(
                     SystemClock.uptimeMillis(),
                     notificationShadeWindowView,
@@ -134,6 +148,7 @@ class PulsingGestureListener @Inject constructor(
                 (doubleTapEnabled || singleTapEnabled || doubleTapEnabledNative) &&
                 !falsingManager.isProximityNear
             ) {
+           if (doubleTapVibrate) wakeVibrate()
                 centralSurfaces.wakeUpIfDozing(
                         SystemClock.uptimeMillis(),
                         notificationShadeWindowView,
@@ -158,5 +173,16 @@ class PulsingGestureListener @Inject constructor(
         pw.println("doubleTapToSleepEnabled=$doubleTapToSleepEnabled")
         pw.println("isDocked=${dockManager.isDocked}")
         pw.println("isProxCovered=${falsingManager.isProximityNear}")
+    }
+
+    private fun wakeVibrate() {
+        if (vibrator == null || !vibrator.hasVibrator()) return
+        var effect = VibrationEffect.createWaveform(longArrayOf(0, 100), -1)
+        if (vibrator.areAllEffectsSupported(VibrationEffect.EFFECT_CLICK) ==
+                Vibrator.VIBRATION_EFFECT_SUPPORT_YES) {
+            effect = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+        }
+        vibrator.vibrate(effect,
+                VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK))
     }
 }

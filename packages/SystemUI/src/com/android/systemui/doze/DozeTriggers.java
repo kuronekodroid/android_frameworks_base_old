@@ -29,6 +29,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.display.AmbientDisplayConfiguration;
 import android.os.SystemClock;
+import android.os.VibrationAttributes;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.format.Formatter;
 import android.util.IndentingPrintWriter;
 import android.util.Log;
@@ -103,6 +106,7 @@ public class DozeTriggers implements DozeMachine.Part {
     private final KeyguardStateController mKeyguardStateController;
     private final UserTracker mUserTracker;
     private final UiEventLogger mUiEventLogger;
+    private final Vibrator mVibrator;
 
     private long mNotificationPulseTime;
     private Runnable mAodInterruptRunnable;
@@ -222,6 +226,7 @@ public class DozeTriggers implements DozeMachine.Part {
         mUiEventLogger = uiEventLogger;
         mKeyguardStateController = keyguardStateController;
         mUserTracker = userTracker;
+        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
@@ -367,7 +372,22 @@ public class DozeTriggers implements DozeMachine.Part {
         return mKeyguardStateController.isOccluded();
     }
 
+    private boolean shouldVibrate(@DozeLog.Reason int reason) {
+        if (mVibrator == null || !mVibrator.hasVibrator())
+            return false;
+        switch (reason) {
+            case DozeLog.REASON_SENSOR_PICKUP:
+                return mConfig.pickupGestureVibrate(mUserTracker.getUserId());
+            case DozeLog.REASON_SENSOR_DOUBLE_TAP:
+                return mConfig.doubleTapGestureVibrate(mUserTracker.getUserId());
+            case DozeLog.REASON_SENSOR_TAP:
+                return mConfig.tapGestureVibrate(mUserTracker.getUserId());
+        }
+        return false;
+    }
+
     private void gentleWakeUp(@DozeLog.Reason int reason) {
+        if (shouldVibrate(reason)) wakeVibrate();
         // Log screen wake up reason (lift/pickup, tap, double-tap)
         Optional.ofNullable(DozingUpdateUiEvent.fromReason(reason))
                 .ifPresent(uiEventEnum -> mUiEventLogger.log(uiEventEnum, getKeyguardSessionId()));
@@ -378,6 +398,16 @@ public class DozeTriggers implements DozeMachine.Part {
             mDozeHost.setAodDimmingScrim(1f);
         }
         mMachine.wakeUp(reason);
+    }
+
+    private void wakeVibrate() {
+        VibrationEffect effect = VibrationEffect.createWaveform(new long[] { 0, 100 }, -1);
+        if (mVibrator.areAllEffectsSupported(VibrationEffect.EFFECT_CLICK) ==
+                Vibrator.VIBRATION_EFFECT_SUPPORT_YES) {
+            effect = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK);
+        }
+        mVibrator.vibrate(effect,
+                VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK));
     }
 
     private void onProximityFar(boolean far) {
