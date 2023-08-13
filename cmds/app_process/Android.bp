@@ -20,6 +20,10 @@ cc_binary {
 
     srcs: ["app_main.cpp"],
 
+    ldflags: [
+        "-Wl,--allow-shlib-undefined",
+    ],
+
     multilib: {
         lib32: {
             suffix: "32",
