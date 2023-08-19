@@ -482,7 +482,7 @@
     <string name="battery_info_status_unknown" msgid="268625384868401114">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‎‏‎‏‏‏‎‏‏‏‎‏‎‎‏‎‏‏‎‎‏‎‏‎‏‏‏‎‏‎‏‎‎‎‎‏‎‏‎‏‏‏‎‏‏‏‏‎‎‏‏‏‏‏‏‎‏‏‎‏‎‎Unknown‎‏‎‎‏‎"</string>
     <string name="battery_info_status_charging" msgid="4279958015430387405">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‏‏‎‏‏‏‎‏‏‎‏‏‎‎‏‎‏‎‏‏‏‎‏‏‏‎‎‏‎‎‎‏‏‏‎‎‎‏‎‏‏‎‏‎‏‎‎‎‎‎‏‏‎‎‏‏‎‏‏‎‎‏‏‎‏‎Charging‎‏‎‎‏‎"</string>
     <string name="battery_info_status_charging_fast" msgid="8027559755902954885">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‏‏‏‏‏‎‏‏‏‏‎‏‏‎‎‏‏‏‏‎‎‏‏‏‏‏‎‎‎‏‎‎‎‎‏‏‏‎‏‏‏‏‏‏‎‏‎‎‎‏‎‎‏‎‏‏‎‏‏‎‎‎‎‏‎‏‎Charging rapidly‎‏‎‎‏‎"</string>
-    <string name="battery_info_status_charging_slow" msgid="3190803837168962319">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‏‏‎‏‎‏‏‎‎‎‏‎‎‏‎‎‎‎‎‎‎‎‎‏‏‎‎‏‎‏‏‏‏‎‎‏‎‏‏‏‎‎‏‏‎‏‎‎‎‏‏‎‎‏‎‏‏‎‎‎‎‏‏‏‏‎Charging slowly‎‏‎‎‏‎"</string>
+    <string name="battery_info_status_charging_slow" msgid="3190803837168962319">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‏‏‎‏‎‏‏‎‎‎‏‎‎‏‎‎‎‎‎‎‎‎‎‏‏‎‎‏‎‏‏‏‏‎‎‏‎‏‏‏‎‎‏‏‎‏‎‎‎‏‏‎‎‏‎‏‏‎‎‎‎‏‏‏‏‎Charging‎‏‎‎‏‎"</string>
     <string name="battery_info_status_charging_wireless" msgid="8924722966861282197">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‏‏‏‏‏‏‏‎‏‏‏‏‎‏‏‎‏‎‏‏‏‏‏‏‎‎‎‏‎‎‎‎‎‎‏‏‎‎‏‏‏‎‏‎‎‎‏‎‎‏‎‏‏‏‏‎‏‏‏‎‎‏‎‏‎‏‎Charging wirelessly‎‏‎‎‏‎"</string>
     <string name="battery_info_status_charging_dock" msgid="8573274094093364791">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‏‏‏‏‏‏‎‏‏‎‏‏‏‏‏‎‏‎‎‏‏‎‎‎‏‏‎‏‎‏‏‏‎‏‏‎‎‎‏‏‎‎‎‏‏‏‏‏‏‎‎‏‏‎‏‏‏‎‎‎‏‏‎‏‏‏‎Charging‎‏‎‎‏‎"</string>
     <string name="battery_info_status_discharging" msgid="6962689305413556485">"‎‏‎‎‎‎‎‏‎‏‏‏‎‎‎‎‎‎‏‎‎‏‎‎‎‏‎‏‏‏‏‏‏‏‏‎‎‎‎‎‏‎‏‎‎‎‎‎‎‏‏‏‎‎‎‏‎‎‎‎‏‎‎‎‏‎‎‎‏‎‏‎‏‎‎‏‎‏‏‎‎‎‎‏‏‎‎‏‎‎‎‎‎‏‎‏‎Not charging‎‏‎‎‏‎"</string>
