@@ -482,7 +482,7 @@
     <string name="battery_info_status_unknown" msgid="268625384868401114">"Неизвестно"</string>
     <string name="battery_info_status_charging" msgid="4279958015430387405">"Идет зарядка"</string>
     <string name="battery_info_status_charging_fast" msgid="8027559755902954885">"Быстрая зарядка"</string>
-    <string name="battery_info_status_charging_slow" msgid="3190803837168962319">"Медленная зарядка"</string>
+    <string name="battery_info_status_charging_slow" msgid="3190803837168962319">"зарядка"</string>
     <string name="battery_info_status_charging_wireless" msgid="8924722966861282197">"Беспроводная зарядка"</string>
     <string name="battery_info_status_charging_dock" msgid="8573274094093364791">"Зарядка"</string>
     <string name="battery_info_status_discharging" msgid="6962689305413556485">"Не заряжается"</string>
