@@ -183,7 +183,7 @@ public class Vpn {
     private static final String NETWORKTYPE = "VPN";
     private static final String TAG = "Vpn";
     private static final String VPN_PROVIDER_NAME_BASE = "VpnNetworkProvider:";
-    private static final boolean LOGD = true;
+    private static final boolean LOGD = false;
     private static final String ANDROID_KEYSTORE_PROVIDER = "AndroidKeyStore";
     /** Key containing prefix of vpn app excluded list */
     @VisibleForTesting static final String VPN_APP_EXCLUDED = "VPNAPPEXCLUDED_";
