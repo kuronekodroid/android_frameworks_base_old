@@ -39,7 +39,13 @@ android_app {
         "**/*.java",
         ":validate_input_devices_keymaps",
     ],
-
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+        proguard_flags_files: ["proguard.proguard"],
+    },
     resource_dirs: ["res"],
 
     sdk_version: "current",

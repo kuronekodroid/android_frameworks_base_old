@@ -36,7 +36,13 @@ android_app {
     defaults: ["platform_app_defaults"],
     certificate: "platform",
     srcs: ["src/**/*.java"],
-
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+        proguard_flags_files: ["proguard.proguard"],
+    },
     static_libs: [
         "androidx.lifecycle_lifecycle-livedata",
         "androidx.lifecycle_lifecycle-extensions",
