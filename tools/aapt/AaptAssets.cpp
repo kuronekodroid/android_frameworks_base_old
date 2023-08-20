@@ -92,7 +92,7 @@ static bool isHidden(const char *root, const char *path)
     char *patterns = strdup(p);
 
     bool ignore = false;
-    bool chatty = true;
+    bool CHATTY = false;
     char *matchedPattern = NULL;
 
     String8 fullPath(root);

@@ -186,7 +186,7 @@ import java.util.function.Predicate;
 
 public class PackageInstallerSession extends IPackageInstallerSession.Stub {
     private static final String TAG = "PackageInstallerSession";
-    private static final boolean LOGD = true;
+    private static final boolean LOGD = false;
     private static final String REMOVE_MARKER_EXTENSION = ".removed";
 
     private static final int MSG_ON_SESSION_SEALED = 1;
