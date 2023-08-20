@@ -292,7 +292,7 @@ bool FileFilter::operator()(const std::string& filename, FileType type) const {
   const char kDir[] = "dir";
   const char kFile[] = "file";
   const size_t filename_len = filename.length();
-  bool CHATTY = false;
+  bool chatty = false;
   for (const std::string& token : pattern_tokens_) {
     const char* token_str = token.c_str();
     if (*token_str == '!') {
