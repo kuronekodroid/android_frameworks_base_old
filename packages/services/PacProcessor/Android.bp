@@ -28,6 +28,13 @@ android_app {
     srcs: ["src/**/*.java"],
     platform_apis: true,
     certificate: "platform",
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+        proguard_flags_files: ["proguard.proguard"],
+    },
 }
 
 filegroup {

@@ -41,6 +41,13 @@ android_app {
 android_robolectric_test {
     name: "SettingsLibRoboTests",
     srcs: ["src/**/*.java"],
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+        proguard_flags_files: ["proguard.proguard"],
+    },
     static_libs: [
         "SettingsLib-robo-testutils",
         "androidx.test.core",
@@ -60,6 +67,13 @@ java_library {
     srcs: [
         "testutils/com/android/settingslib/testutils/**/*.java",
     ],
+    optimize: {
+        enabled: true,
+        optimize: true,
+        shrink: true,
+        obfuscate: true,
+        proguard_flags_files: ["proguard.proguard"],
+    },
 
     libs: [
         "Robolectric_all-target",
