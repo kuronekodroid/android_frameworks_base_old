@@ -64,7 +64,7 @@ public class MtpStorageManagerTest {
     private MtpStorage secondaryMtpStorage;
 
     static {
-        MtpStorageManager.sDEBUG = false;
+        MtpStorageManager.sDebug = false;
     }
 
     private static void logMethodName() {
