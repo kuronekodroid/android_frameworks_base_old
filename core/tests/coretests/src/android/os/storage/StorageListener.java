@@ -19,7 +19,7 @@ package android.os.storage;
 import android.util.Log;
 
 public class StorageListener extends StorageEventListener {
-    private static final boolean localLOGV = true;
+    private static final boolean localLOGV = false;
 
     public static final String TAG = "StorageListener";
 
