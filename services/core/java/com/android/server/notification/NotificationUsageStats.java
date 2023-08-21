@@ -62,8 +62,8 @@ import java.util.Set;
 public class NotificationUsageStats {
     private static final String TAG = "NotificationUsageStats";
 
-    private static final boolean ENABLE_AGGREGATED_IN_MEMORY_STATS = true;
-    private static final boolean ENABLE_SQLITE_LOG = true;
+    private static final boolean ENABLE_AGGREGATED_IN_MEMORY_STATS = false;
+    private static final boolean ENABLE_SQLITE_LOG = false;
     private static final AggregatedStats[] EMPTY_AGGREGATED_STATS = new AggregatedStats[0];
     private static final String DEVICE_GLOBAL_STATS = "__global"; // packages start with letters
     private static final int MSG_EMIT = 1;
