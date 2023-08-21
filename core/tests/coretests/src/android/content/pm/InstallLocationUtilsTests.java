@@ -37,7 +37,7 @@ import java.util.UUID;
 
 @Presubmit
 public class InstallLocationUtilsTests extends AndroidTestCase {
-    private static final boolean localLOGV = true;
+    private static final boolean localLOGV = false;
     public static final String TAG = "PackageHelperTests";
 
     private static final String sInternalVolPath = "/data";
