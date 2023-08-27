@@ -1206,9 +1206,6 @@ void AndroidRuntime::start(const char* className, const Vector<String8>& options
     for (size_t i = 0; i < options.size(); ++i) {
         if (options[i] == startSystemServer) {
             primary_zygote = true;
-           /* track our progress through the boot sequence */
-           const int LOG_BOOT_PROGRESS_START = 3000;
-           LOG_EVENT_LONG(LOG_BOOT_PROGRESS_START,  ns2ms(systemTime(SYSTEM_TIME_MONOTONIC)));
         }
     }
 
