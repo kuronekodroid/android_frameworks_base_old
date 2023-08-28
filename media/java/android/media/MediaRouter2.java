@@ -66,7 +66,7 @@ import java.util.stream.Collectors;
 // TODO: ensure thread-safe and document it
 public final class MediaRouter2 {
     private static final String TAG = "MR2";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final Object sSystemRouterLock = new Object();
     private static final Object sRouterLock = new Object();
 

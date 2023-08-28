@@ -93,7 +93,7 @@ import javax.inject.Inject;
 public class KeyguardSecurityContainerController extends ViewController<KeyguardSecurityContainer>
         implements KeyguardSecurityView {
 
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String TAG = "KeyguardSecurityView";
 
     private final AdminSecondaryLockScreenController mAdminSecondaryLockScreenController;

@@ -47,7 +47,7 @@ import javax.inject.Provider;
 @DozeScope
 public class DozeScreenState implements DozeMachine.Part {
 
-    private static final boolean DEBUG = DozeService.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String TAG = "DozeScreenState";
 
     /**

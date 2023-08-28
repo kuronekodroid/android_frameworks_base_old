@@ -46,7 +46,7 @@ public class KeyguardSimPinViewController
         extends KeyguardPinBasedInputViewController<KeyguardSimPinView> {
     public static final String TAG = "KeyguardSimPinView";
     private static final String LOG_TAG = "KeyguardSimPinView";
-    private static final boolean DEBUG = KeyguardConstants.DEBUG_SIM_STATES;
+    private static final boolean DEBUG = false;
     private final KeyguardUpdateMonitor mKeyguardUpdateMonitor;
     private final TelephonyManager mTelephonyManager;
 

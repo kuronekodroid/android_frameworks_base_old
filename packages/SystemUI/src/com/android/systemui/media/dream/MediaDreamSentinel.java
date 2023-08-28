@@ -39,7 +39,7 @@ import javax.inject.Inject;
  */
 public class MediaDreamSentinel implements CoreStartable {
     private static final String TAG = "MediaDreamSentinel";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final MediaDataManager.Listener mListener = new MediaDataManager.Listener() {
         private boolean mAdded;

@@ -43,7 +43,7 @@ import com.android.systemui.R;
  */
 public class UdfpsDialogMeasureAdapter {
     private static final String TAG = "UdfpsDialogMeasurementAdapter";
-    private static final boolean DEBUG = Build.IS_USERDEBUG || Build.IS_ENG;
+    private static final boolean DEBUG = false;
 
     @NonNull private final ViewGroup mView;
     @NonNull private final FingerprintSensorPropertiesInternal mSensorProps;

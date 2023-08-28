@@ -34,7 +34,7 @@ import java.util.Map;
 public class SystemServerDexLoadReporter implements BaseDexClassLoader.Reporter {
     private static final String TAG = "SystemServerDexLoadReporter";
 
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final IPackageManager mPackageManager;
 

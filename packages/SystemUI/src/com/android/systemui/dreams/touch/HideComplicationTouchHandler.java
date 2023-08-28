@@ -51,7 +51,7 @@ import javax.inject.Named;
  */
 public class HideComplicationTouchHandler implements DreamTouchHandler {
     private static final String TAG = "HideComplicationHandler";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final int mRestoreTimeout;
     private final int mFadeOutDelay;

@@ -44,7 +44,7 @@ public class TextViewTranslationCallback implements ViewTranslationCallback {
 
     private static final String TAG = "TextViewTranslationCb";
 
-    private static final boolean DEBUG = Log.isLoggable(UiTranslationManager.LOG_TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private TranslationTransformationMethod mTranslationTransformation;
     private boolean mIsShowingTranslation = false;

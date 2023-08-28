@@ -43,7 +43,7 @@ import javax.inject.Inject;
 public class KeyguardSecurityViewFlipperController
         extends ViewController<KeyguardSecurityViewFlipper> {
 
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String TAG = "KeyguardSecurityView";
 
     private final List<KeyguardInputViewController<KeyguardInputView>> mChildren =

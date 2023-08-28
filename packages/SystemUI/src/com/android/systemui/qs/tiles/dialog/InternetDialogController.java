@@ -141,7 +141,7 @@ public class InternetDialogController implements AccessPointController.AccessPoi
             R.string.non_carrier_network_unavailable;
     private static final int SUBTITLE_TEXT_ALL_CARRIER_NETWORK_UNAVAILABLE =
             R.string.all_network_unavailable;
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final TelephonyDisplayInfo DEFAULT_TELEPHONY_DISPLAY_INFO =
             new TelephonyDisplayInfo(TelephonyManager.NETWORK_TYPE_UNKNOWN,
                     TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NONE);

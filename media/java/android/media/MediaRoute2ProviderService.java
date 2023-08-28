@@ -71,7 +71,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class MediaRoute2ProviderService extends Service {
     private static final String TAG = "MR2ProviderService";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     /**
      * The {@link Intent} action that must be declared as handled by the service.

@@ -52,7 +52,7 @@ import java.util.Map;
  */
 class GnssVisibilityControl {
     private static final String TAG = "GnssVisibilityControl";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final String LOCATION_PERMISSION_NAME =
             "android.permission.ACCESS_FINE_LOCATION";

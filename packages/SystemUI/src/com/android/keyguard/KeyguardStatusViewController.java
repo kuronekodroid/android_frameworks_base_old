@@ -38,7 +38,7 @@ import javax.inject.Inject;
  * Injectable controller for {@link KeyguardStatusView}.
  */
 public class KeyguardStatusViewController extends ViewController<KeyguardStatusView> {
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String TAG = "KeyguardStatusViewController";
 
     private static final AnimationProperties CLOCK_ANIMATION_PROPERTIES =

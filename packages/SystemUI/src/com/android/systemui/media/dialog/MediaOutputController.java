@@ -106,7 +106,7 @@ public class MediaOutputController implements LocalMediaManager.DeviceCallback,
         INearbyMediaDevicesUpdateCallback {
 
     private static final String TAG = "MediaOutputController";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final String PAGE_CONNECTED_DEVICES_KEY =
             "top_level_connected_devices";
     private static final long ALLOWLIST_DURATION_MS = 20000;

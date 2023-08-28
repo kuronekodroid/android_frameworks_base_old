@@ -40,7 +40,7 @@ import java.util.Collections;
  */
 final class MediaRoute2ProviderWatcher {
     private static final String TAG = "MR2ProviderWatcher";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final Context mContext;
     private final Callback mCallback;

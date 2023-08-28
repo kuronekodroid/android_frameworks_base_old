@@ -30,7 +30,7 @@ import java.util.Arrays;
  * from the WiFi controller.
  */
 public class WifiPowerCalculator extends PowerCalculator {
-    private static final boolean DEBUG = PowerCalculator.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String TAG = "WifiPowerCalculator";
 
     private static final BatteryConsumer.Key[] UNINITIALIZED_KEYS = new BatteryConsumer.Key[0];

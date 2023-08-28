@@ -37,7 +37,7 @@ import javax.inject.Inject;
 public class DozeService extends DreamService
         implements DozeMachine.Service, RequestDoze, PluginListener<DozeServicePlugin> {
     private static final String TAG = "DozeService";
-    static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    static final boolean DEBUG = false;
     private final DozeComponent.Builder mDozeComponentBuilder;
 
     private DozeMachine mDozeMachine;

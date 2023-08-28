@@ -40,7 +40,7 @@ import javax.inject.Named;
  */
 public final class LowLightDreamManager {
     private static final String TAG = "LowLightDreamManager";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     /**
      * @hide

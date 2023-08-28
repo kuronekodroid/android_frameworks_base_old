@@ -39,12 +39,11 @@ public class AccessibilityCache {
 
     private static final String LOG_TAG = "AccessibilityCache";
 
-    private static final boolean DEBUG = Log.isLoggable(LOG_TAG, Log.DEBUG) && Build.IS_DEBUGGABLE;
+    private static final boolean DEBUG = false;
 
-    private static final boolean VERBOSE =
-            Log.isLoggable(LOG_TAG, Log.VERBOSE) && Build.IS_DEBUGGABLE;
+    private static final boolean VERBOSE = false;
 
-    private static final boolean CHECK_INTEGRITY = Build.IS_ENG;
+    private static final boolean CHECK_INTEGRITY = false;
 
     private boolean mEnabled = true;
 

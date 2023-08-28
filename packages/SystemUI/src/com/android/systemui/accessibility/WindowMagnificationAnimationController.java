@@ -43,7 +43,7 @@ class WindowMagnificationAnimationController implements ValueAnimator.AnimatorUp
         Animator.AnimatorListener {
 
     private static final String TAG = "WindowMagnificationAnimationController";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({STATE_DISABLED, STATE_ENABLED, STATE_DISABLING, STATE_ENABLING})

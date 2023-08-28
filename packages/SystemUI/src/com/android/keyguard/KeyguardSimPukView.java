@@ -29,7 +29,7 @@ import com.android.systemui.R;
  * Displays a PIN pad for entering a PUK (Pin Unlock Kode) provided by a carrier.
  */
 public class KeyguardSimPukView extends KeyguardSimInputView {
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
     public static final String TAG = "KeyguardSimPukView";
 
     public KeyguardSimPukView(Context context) {

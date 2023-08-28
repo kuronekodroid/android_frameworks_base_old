@@ -59,7 +59,7 @@ import java.util.function.Consumer;
 class ShareTargetPredictor extends AppTargetPredictor {
 
     private static final String TAG = "ShareTargetPredictor";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final String REMOTE_APP_PREDICTOR_KEY = "remote_app_predictor";
     private final IntentFilter mIntentFilter;
     private final AppPredictor mRemoteAppPredictor;

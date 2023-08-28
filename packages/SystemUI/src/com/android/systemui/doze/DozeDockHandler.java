@@ -35,7 +35,7 @@ import javax.inject.Inject;
 public class DozeDockHandler implements DozeMachine.Part {
 
     private static final String TAG = "DozeDockHandler";
-    private static final boolean DEBUG = DozeService.DEBUG;
+    private static final boolean DEBUG = false;
 
     private final AmbientDisplayConfiguration mConfig;
     private DozeMachine mMachine;

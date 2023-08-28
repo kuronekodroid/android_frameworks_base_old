@@ -57,7 +57,7 @@ import java.util.Objects;
 final class MediaRoute2ProviderServiceProxy extends MediaRoute2Provider
         implements ServiceConnection {
     private static final String TAG = "MR2ProviderSvcProxy";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final Context mContext;
     private final int mUserId;

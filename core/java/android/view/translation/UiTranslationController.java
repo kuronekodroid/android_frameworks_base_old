@@ -65,7 +65,7 @@ import java.util.function.BiConsumer;
  */
 public class UiTranslationController implements Dumpable {
 
-    public static final boolean DEBUG = Log.isLoggable(UiTranslationManager.LOG_TAG, Log.DEBUG);
+    public static final boolean DEBUG = false;
 
     /** @hide */
     public static final String DUMPABLE_NAME = "UiTranslationController";

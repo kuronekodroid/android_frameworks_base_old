@@ -50,7 +50,7 @@ import java.util.concurrent.Executor;
 public class LocalBluetoothLeBroadcastAssistant implements LocalBluetoothProfile {
     private static final String TAG = "LocalBluetoothLeBroadcastAssistant";
     private static final int UNKNOWN_VALUE_PLACEHOLDER = -1;
-    private static final boolean DEBUG = BluetoothUtils.D;
+    private static final boolean DEBUG = false;
 
     static final String NAME = "LE_AUDIO_BROADCAST_ASSISTANT";
     // Order of this profile in device profiles list

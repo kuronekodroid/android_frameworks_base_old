@@ -83,7 +83,7 @@ import javax.inject.Inject;
 public class InternetDialog extends SystemUIDialog implements
         InternetDialogController.InternetDialogCallback, Window.Callback {
     private static final String TAG = "InternetDialog";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     static final long PROGRESS_DELAY_MS = 1500L;
     static final int MAX_NETWORK_COUNT = 4;

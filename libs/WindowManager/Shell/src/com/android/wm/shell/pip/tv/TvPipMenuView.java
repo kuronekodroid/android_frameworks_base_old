@@ -69,7 +69,7 @@ import java.util.List;
  */
 public class TvPipMenuView extends FrameLayout implements View.OnClickListener {
     private static final String TAG = "TvPipMenuView";
-    private static final boolean DEBUG = TvPipController.DEBUG;
+    private static final boolean DEBUG = false;
 
     private static final int FIRST_CUSTOM_ACTION_POSITION = 3;
 

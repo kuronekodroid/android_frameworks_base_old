@@ -39,7 +39,7 @@ import com.android.systemui.statusbar.phone.SystemUIDialog;
 public class BroadcastDialog extends SystemUIDialog {
 
     private static final String TAG = "BroadcastDialog";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private Context mContext;
     private UiEventLogger mUiEventLogger;

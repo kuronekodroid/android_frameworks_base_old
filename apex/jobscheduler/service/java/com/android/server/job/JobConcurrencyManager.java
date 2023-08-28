@@ -79,7 +79,7 @@ import java.util.function.Predicate;
  */
 class JobConcurrencyManager {
     private static final String TAG = JobSchedulerService.TAG + ".Concurrency";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG;
+    private static final boolean DEBUG = false;
 
     /** The maximum number of concurrent jobs we'll aim to run at one time. */
     public static final int STANDARD_CONCURRENCY_LIMIT = 16;

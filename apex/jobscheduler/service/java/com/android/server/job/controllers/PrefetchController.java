@@ -58,8 +58,7 @@ import java.util.function.Predicate;
  */
 public class PrefetchController extends StateController {
     private static final String TAG = "JobScheduler.Prefetch";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final PcConstants mPcConstants;
     private final PcHandler mHandler;

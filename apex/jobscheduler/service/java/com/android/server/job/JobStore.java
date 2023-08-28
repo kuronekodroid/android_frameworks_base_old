@@ -85,7 +85,7 @@ import java.util.function.Predicate;
  */
 public final class JobStore {
     private static final String TAG = "JobStore";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG;
+    private static final boolean DEBUG = false;
 
     /** Threshold to adjust how often we want to write to the db. */
     private static final long JOB_PERSIST_DELAY = 2000L;

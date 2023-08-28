@@ -79,8 +79,7 @@ import java.util.function.Predicate;
 public final class ConnectivityController extends RestrictingController implements
         ConnectivityManager.OnNetworkActiveListener {
     private static final String TAG = "JobScheduler.Connectivity";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // The networking stack has a hard limit so we can't make this configurable.
     private static final int MAX_NETWORK_CALLBACKS = 125;

@@ -42,7 +42,7 @@ public class KeyguardPatternView extends KeyguardInputView
         implements AppearAnimationCreator<LockPatternView.CellState> {
 
     private static final String TAG = "SecurityPatternView";
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
 
 
     // how long we stay awake after each key beyond MIN_PATTERN_BEFORE_POKE_WAKELOCK

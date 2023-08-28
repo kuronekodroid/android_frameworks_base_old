@@ -37,7 +37,7 @@ import java.util.List;
 public class MediaOutputMetricLogger {
 
     private static final String TAG = "MediaOutputMetricLogger";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final Context mContext;
     private final String mPackageName;

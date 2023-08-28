@@ -30,8 +30,7 @@ import android.util.Slog;
 /** Modifier that makes things free when the device is charging. */
 class ChargingModifier extends Modifier {
     private static final String TAG = "TARE-" + ChargingModifier.class.getSimpleName();
-    private static final boolean DEBUG = InternalResourceService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final InternalResourceService mIrs;
     private final ChargingTracker mChargingTracker;

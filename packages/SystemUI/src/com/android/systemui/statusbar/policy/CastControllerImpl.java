@@ -53,7 +53,7 @@ import javax.inject.Inject;
 @SysUISingleton
 public class CastControllerImpl implements CastController {
     private static final String TAG = "CastController";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final Context mContext;
     @GuardedBy("mCallbacks")

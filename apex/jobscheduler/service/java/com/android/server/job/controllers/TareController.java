@@ -49,8 +49,7 @@ import java.util.function.Predicate;
  */
 public class TareController extends StateController {
     private static final String TAG = "JobScheduler.TARE";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     /**
      * Bill to use while we're waiting to start a min priority job. If a job isn't running yet,

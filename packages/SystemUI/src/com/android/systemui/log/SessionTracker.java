@@ -51,7 +51,7 @@ public class SessionTracker implements CoreStartable {
     private static final String TAG = "SessionTracker";
 
     // To enable logs: `adb shell setprop log.tag.SessionTracker DEBUG` & restart sysui
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // At most 20 bits: ~1m possibilities, ~0.5% probability of collision in 100 values
     private final InstanceIdSequence mInstanceIdGenerator = new InstanceIdSequence(1 << 20);

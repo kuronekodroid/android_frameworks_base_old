@@ -76,7 +76,7 @@ import java.util.function.Supplier;
 public final class BackgroundDexOptService {
     private static final String TAG = "BackgroundDexOptService";
 
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     @VisibleForTesting static final int JOB_IDLE_OPTIMIZE = 800;
     @VisibleForTesting static final int JOB_POST_BOOT_UPDATE = 801;

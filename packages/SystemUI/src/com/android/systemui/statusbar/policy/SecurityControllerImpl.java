@@ -77,7 +77,7 @@ import javax.inject.Inject;
 public class SecurityControllerImpl implements SecurityController {
 
     private static final String TAG = "SecurityController";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final NetworkRequest REQUEST =
             new NetworkRequest.Builder().clearCapabilities().build();

@@ -57,7 +57,7 @@ import javax.inject.Named;
  */
 public class DreamOverlayService extends android.service.dreams.DreamOverlayService {
     private static final String TAG = "DreamOverlayService";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // The Context is used to construct the hosting constraint layout and child overlay views.
     private final Context mContext;

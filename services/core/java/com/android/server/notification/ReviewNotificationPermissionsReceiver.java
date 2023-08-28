@@ -39,7 +39,7 @@ import java.time.temporal.ChronoUnit;
  */
 public class ReviewNotificationPermissionsReceiver extends BroadcastReceiver {
     public static final String TAG = "ReviewNotifPermissions";
-    static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    static final boolean DEBUG = false;
 
     // 7 days in millis, as the amount of time to wait before re-sending the notification
     private static final long JOB_RESCHEDULE_TIME = 1000 /* millis */ * 60 /* seconds */

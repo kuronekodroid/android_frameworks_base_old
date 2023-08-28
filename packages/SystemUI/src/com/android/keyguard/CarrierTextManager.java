@@ -52,7 +52,7 @@ import javax.inject.Inject;
  * separated by a given separator {@link CharSequence}.
  */
 public class CarrierTextManager {
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String TAG = "CarrierTextController";
 
     private final boolean mIsEmergencyCallCapable;

@@ -47,8 +47,7 @@ import java.util.function.Predicate;
  */
 public class ComponentController extends StateController {
     private static final String TAG = "JobScheduler.Component";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 

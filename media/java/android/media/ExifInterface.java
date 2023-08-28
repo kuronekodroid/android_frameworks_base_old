@@ -100,7 +100,7 @@ import java.util.zip.CRC32;
  */
 public class ExifInterface {
     private static final String TAG = "ExifInterface";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // The Exif tag names. See Tiff 6.0 Section 3 and Section 8.
     /** Type is String. */

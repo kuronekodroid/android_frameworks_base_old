@@ -34,8 +34,7 @@ import java.util.List;
  */
 public class Analyst {
     private static final String TAG = "TARE-" + Analyst.class.getSimpleName();
-    private static final boolean DEBUG = InternalResourceService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final int NUM_PERIODS_TO_RETAIN = 8;
 

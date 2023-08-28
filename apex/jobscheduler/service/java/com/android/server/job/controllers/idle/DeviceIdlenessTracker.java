@@ -41,8 +41,7 @@ import java.util.Set;
 /** Class to track device idle state. */
 public final class DeviceIdlenessTracker extends BroadcastReceiver implements IdlenessTracker {
     private static final String TAG = "JobScheduler.DeviceIdlenessTracker";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private AlarmManager mAlarm;
     private PowerManager mPowerManager;

@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class HearingAidDeviceManager {
     private static final String TAG = "HearingAidDeviceManager";
-    private static final boolean DEBUG = BluetoothUtils.D;
+    private static final boolean DEBUG = false;
 
     private final LocalBluetoothManager mBtManager;
     private final List<CachedBluetoothDevice> mCachedDevices;

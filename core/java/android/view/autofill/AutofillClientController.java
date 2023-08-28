@@ -49,7 +49,7 @@ public final class AutofillClientController implements AutofillManager.AutofillC
     private static final String TAG = "AutofillClientController";
 
     private static final String LOG_TAG = "autofill_client";
-    public static final boolean DEBUG = Log.isLoggable(LOG_TAG, Log.DEBUG);
+    public static final boolean DEBUG = false;
 
     public static final String LAST_AUTOFILL_ID = "android:lastAutofillId";
     public static final String AUTOFILL_RESET_NEEDED = "@android:autofillResetNeeded";

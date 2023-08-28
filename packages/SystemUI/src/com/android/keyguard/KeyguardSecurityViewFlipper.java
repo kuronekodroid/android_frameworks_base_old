@@ -39,7 +39,7 @@ import com.android.systemui.R;
  */
 public class KeyguardSecurityViewFlipper extends ViewFlipper {
     private static final String TAG = "KeyguardSecurityViewFlipper";
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
 
     private Rect mTempRect = new Rect();
 

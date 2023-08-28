@@ -46,7 +46,7 @@ final class BatteryController {
 
     // To enable these logs, run:
     // 'adb shell setprop log.tag.BatteryController DEBUG' (requires restart)
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final Object mLock = new Object();
     private final Context mContext;

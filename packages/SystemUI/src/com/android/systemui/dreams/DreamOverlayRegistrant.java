@@ -47,7 +47,7 @@ import javax.inject.Named;
  */
 public class DreamOverlayRegistrant extends ConditionalCoreStartable {
     private static final String TAG = "DreamOverlayRegistrant";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private final IDreamManager mDreamManager;
     private final ComponentName mOverlayServiceComponent;
     private final Context mContext;

@@ -66,7 +66,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class TunerResourceManagerService extends SystemService implements IBinder.DeathRecipient {
     private static final String TAG = "TunerResourceManagerService";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     public static final int INVALID_CLIENT_ID = -1;
     private static final int MAX_CLIENT_PRIORITY = 1000;

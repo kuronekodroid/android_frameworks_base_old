@@ -45,8 +45,7 @@ import java.util.function.Predicate;
  */
 public final class ContentObserverController extends StateController {
     private static final String TAG = "JobScheduler.ContentObserver";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     /**
      * Maximum number of changing URIs we will batch together to report.

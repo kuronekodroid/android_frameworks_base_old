@@ -46,7 +46,7 @@ import java.util.List;
 public class MediaOutputAdapter extends MediaOutputBaseAdapter {
 
     private static final String TAG = "MediaOutputAdapter";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     public MediaOutputAdapter(MediaOutputController controller) {
         super(controller);

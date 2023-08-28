@@ -74,7 +74,7 @@ public final class SnoozeHelper {
 
 
     private static final String TAG = "SnoozeHelper";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final String INDENT = "    ";
 
     private static final String REPOST_ACTION = SnoozeHelper.class.getSimpleName() + ".EVALUATE";
