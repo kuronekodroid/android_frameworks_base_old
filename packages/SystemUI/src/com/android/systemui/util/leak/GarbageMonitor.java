@@ -114,7 +114,7 @@ public class GarbageMonitor implements Dumpable {
     static final int GARBAGE_ALLOWANCE = 5;
 
     private static final String TAG = "GarbageMonitor";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final MessageRouter mMessageRouter;
     private final TrackedGarbage mTrackedGarbage;

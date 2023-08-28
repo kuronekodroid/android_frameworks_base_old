@@ -49,7 +49,7 @@ import com.android.internal.annotations.VisibleForTesting;
 public final class BackgroundBlurDrawable extends Drawable {
 
     private static final String TAG = BackgroundBlurDrawable.class.getSimpleName();
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final Aggregator mAggregator;
     private final RenderNode mRenderNode;

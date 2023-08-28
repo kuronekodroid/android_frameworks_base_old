@@ -109,7 +109,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
         implements NetworkController, DemoMode, DataUsageController.NetworkNameProvider, Dumpable {
     // debug
     static final String TAG = "NetworkController";
-    static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    static final boolean DEBUG = false;
     // additional diagnostics, but not logspew
     static final boolean CHATTY =  Log.isLoggable(TAG + "Chat", Log.DEBUG);
 

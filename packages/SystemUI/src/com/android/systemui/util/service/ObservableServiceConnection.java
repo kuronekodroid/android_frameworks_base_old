@@ -45,7 +45,7 @@ import javax.inject.Inject;
  */
 public class ObservableServiceConnection<T> implements ServiceConnection {
     private static final String TAG = "ObservableSvcConn";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     /**
      * An interface for converting the service proxy into a given internal wrapper type.
      * @param <T> The type of the wrapper over the resulting service.

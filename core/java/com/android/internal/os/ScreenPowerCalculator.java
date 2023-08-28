@@ -36,7 +36,7 @@ import com.android.internal.annotations.VisibleForTesting;
  */
 public class ScreenPowerCalculator extends PowerCalculator {
     private static final String TAG = "ScreenPowerCalculator";
-    private static final boolean DEBUG = PowerCalculator.DEBUG;
+    private static final boolean DEBUG = false;
 
     // Minimum amount of time the screen should be on to start smearing drain to apps
     public static final long MIN_ACTIVE_TIME_FOR_SMEARING = 10 * DateUtils.MINUTE_IN_MILLIS;

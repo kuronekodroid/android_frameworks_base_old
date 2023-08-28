@@ -64,7 +64,7 @@ import java.util.concurrent.Executor;
 @SystemService(Context.TV_TUNER_RESOURCE_MGR_SERVICE)
 public class TunerResourceManager {
     private static final String TAG = "TunerResourceManager";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     public static final int INVALID_RESOURCE_HANDLE = -1;
     public static final int INVALID_OWNER_ID = -1;

@@ -243,7 +243,7 @@ public class Tuner implements AutoCloseable  {
 
 
     private static final String TAG = "MediaTvTuner";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final int MSG_RESOURCE_LOST = 1;
     private static final int MSG_ON_FILTER_EVENT = 2;

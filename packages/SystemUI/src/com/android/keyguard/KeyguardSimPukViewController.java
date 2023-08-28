@@ -41,7 +41,7 @@ import com.android.systemui.classifier.FalsingCollector;
 
 public class KeyguardSimPukViewController
         extends KeyguardPinBasedInputViewController<KeyguardSimPukView> {
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
     public static final String TAG = "KeyguardSimPukView";
 
     private final KeyguardUpdateMonitor mKeyguardUpdateMonitor;

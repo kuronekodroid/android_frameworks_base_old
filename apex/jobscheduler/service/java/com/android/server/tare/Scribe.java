@@ -55,8 +55,7 @@ import java.util.List;
  */
 public class Scribe {
     private static final String TAG = "TARE-" + Scribe.class.getSimpleName();
-    private static final boolean DEBUG = InternalResourceService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     /** The maximum number of transactions to dump per ledger. */
     private static final int MAX_NUM_TRANSACTION_DUMP = 25;

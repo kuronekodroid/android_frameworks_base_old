@@ -96,7 +96,7 @@ public class DreamMediaEntryComplication implements Complication {
      */
     static class DreamMediaEntryViewController extends ViewController<View> {
         private static final String TAG = "DreamMediaEntryVwCtrl";
-        private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+        private static final boolean DEBUG = false;
 
         private final DreamOverlayStateController mDreamOverlayStateController;
         private final MediaDreamComplication mMediaComplication;

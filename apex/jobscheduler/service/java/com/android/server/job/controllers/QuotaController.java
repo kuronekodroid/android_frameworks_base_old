@@ -112,8 +112,7 @@ import java.util.function.Predicate;
  */
 public final class QuotaController extends StateController {
     private static final String TAG = "JobScheduler.Quota";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final String ALARM_TAG_CLEANUP = "*job.cleanup*";
     private static final String ALARM_TAG_QUOTA_CHECK = "*job.quota_check*";

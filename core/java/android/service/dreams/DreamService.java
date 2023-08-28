@@ -174,7 +174,7 @@ import java.util.function.Consumer;
 public class DreamService extends Service implements Window.Callback {
     private static final String TAG = DreamService.class.getSimpleName();
     private final String mTag = TAG + "[" + getClass().getSimpleName() + "]";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     /**
      * The name of the dream manager service.

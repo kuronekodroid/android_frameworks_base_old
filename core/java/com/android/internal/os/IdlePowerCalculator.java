@@ -27,7 +27,7 @@ import android.util.Log;
  */
 public class IdlePowerCalculator extends PowerCalculator {
     private static final String TAG = "IdlePowerCalculator";
-    private static final boolean DEBUG = PowerCalculator.DEBUG;
+    private static final boolean DEBUG = false;
     private final double mAveragePowerCpuSuspendMahPerUs;
     private final double mAveragePowerCpuIdleMahPerUs;
     public long mDurationMs;

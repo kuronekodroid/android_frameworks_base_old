@@ -30,8 +30,7 @@ import android.util.Slog;
 /** Modifier that makes things more expensive in adaptive and full battery saver are active. */
 class PowerSaveModeModifier extends Modifier {
     private static final String TAG = "TARE-" + PowerSaveModeModifier.class.getSimpleName();
-    private static final boolean DEBUG = InternalResourceService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final InternalResourceService mIrs;
     private final PowerSaveModeTracker mPowerSaveModeTracker;

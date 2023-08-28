@@ -66,8 +66,7 @@ import java.util.function.Consumer;
  */
 class Agent {
     private static final String TAG = "TARE-" + Agent.class.getSimpleName();
-    private static final boolean DEBUG = InternalResourceService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final String ALARM_TAG_AFFORDABILITY_CHECK = "*tare.affordability_check*";
 

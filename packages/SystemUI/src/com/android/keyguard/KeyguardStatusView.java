@@ -37,7 +37,7 @@ import java.util.Set;
  * - media player (split shade mode only)
  */
 public class KeyguardStatusView extends GridLayout {
-    private static final boolean DEBUG = KeyguardConstants.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String TAG = "KeyguardStatusView";
 
     private ViewGroup mStatusViewContainer;

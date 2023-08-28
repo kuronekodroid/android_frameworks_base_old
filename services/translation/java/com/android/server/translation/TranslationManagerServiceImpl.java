@@ -76,7 +76,7 @@ final class TranslationManagerServiceImpl extends
 
     private static final String TAG = "TranslationManagerServiceImpl";
     @SuppressLint("IsLoggableTagLength")
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     @GuardedBy("mLock")
     @Nullable

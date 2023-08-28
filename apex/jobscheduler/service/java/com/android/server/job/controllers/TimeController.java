@@ -46,8 +46,7 @@ import java.util.function.Predicate;
  */
 public final class TimeController extends StateController {
     private static final String TAG = "JobScheduler.Time";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     @VisibleForTesting
     static final long DELAY_COALESCE_TIME_MS = 30_000L;

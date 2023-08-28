@@ -37,7 +37,7 @@ import javax.inject.Named;
  */
 public class PersistentConnectionManager<T> {
     private static final String TAG = "PersistentConnManager";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final SystemClock mSystemClock;
     private final DelayableExecutor mMainExecutor;

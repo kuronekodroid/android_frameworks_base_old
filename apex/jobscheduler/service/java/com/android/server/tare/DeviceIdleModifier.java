@@ -28,8 +28,7 @@ import android.util.Log;
 /** Modifier that makes things more expensive in light and deep doze. */
 class DeviceIdleModifier extends Modifier {
     private static final String TAG = "TARE-" + DeviceIdleModifier.class.getSimpleName();
-    private static final boolean DEBUG = InternalResourceService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final InternalResourceService mIrs;
     private final PowerManager mPowerManager;

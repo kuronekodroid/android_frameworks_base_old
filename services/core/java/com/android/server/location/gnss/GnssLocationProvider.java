@@ -141,7 +141,7 @@ public class GnssLocationProvider extends AbstractLocationProvider implements
 
     private static final String TAG = "GnssLocationProvider";
 
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final boolean VERBOSE = Log.isLoggable(TAG, Log.VERBOSE);
 
     private static final ProviderProperties PROPERTIES = new ProviderProperties.Builder()

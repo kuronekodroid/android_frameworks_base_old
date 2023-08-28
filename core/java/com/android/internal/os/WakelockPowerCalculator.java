@@ -27,7 +27,7 @@ import android.util.SparseArray;
 
 public class WakelockPowerCalculator extends PowerCalculator {
     private static final String TAG = "WakelockPowerCalculator";
-    private static final boolean DEBUG = PowerCalculator.DEBUG;
+    private static final boolean DEBUG = false;
     private final UsageBasedPowerEstimator mPowerEstimator;
 
     private static class PowerAndDuration {

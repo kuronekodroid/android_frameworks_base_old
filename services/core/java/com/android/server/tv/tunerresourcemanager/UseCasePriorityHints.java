@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class UseCasePriorityHints {
     private static final String TAG = "UseCasePriorityHints";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final String PATH_TO_VENDOR_CONFIG_XML =
             "/vendor/etc/tunerResourceManagerUseCaseConfig.xml";

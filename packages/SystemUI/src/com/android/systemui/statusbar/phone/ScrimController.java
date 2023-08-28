@@ -91,7 +91,7 @@ import kotlinx.coroutines.CoroutineDispatcher;
 public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dumpable {
 
     static final String TAG = "ScrimController";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // debug mode colors scrims with below debug colors, irrespectively of which state they're in
     public static final boolean DEBUG_MODE = false;

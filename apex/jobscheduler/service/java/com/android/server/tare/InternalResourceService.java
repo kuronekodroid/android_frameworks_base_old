@@ -89,7 +89,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class InternalResourceService extends SystemService {
     public static final String TAG = "TARE-IRS";
-    public static final boolean DEBUG = Log.isLoggable("TARE", Log.DEBUG);
+    public static final boolean DEBUG = false;
 
     static final long UNUSED_RECLAMATION_PERIOD_MS = 24 * HOUR_IN_MILLIS;
     /** How much of an app's unused wealth should be reclaimed periodically. */

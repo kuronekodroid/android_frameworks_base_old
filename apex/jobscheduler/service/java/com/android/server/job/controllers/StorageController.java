@@ -41,8 +41,7 @@ import java.util.function.Predicate;
  */
 public final class StorageController extends StateController {
     private static final String TAG = "JobScheduler.Storage";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final ArraySet<JobStatus> mTrackedTasks = new ArraySet<JobStatus>();
     private final StorageTracker mStorageTracker;

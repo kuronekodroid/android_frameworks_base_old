@@ -53,7 +53,7 @@ import java.util.zip.ZipEntry;
 public class DexMetadataHelper {
     public static final String TAG = "DexMetadataHelper";
     /** $> adb shell 'setprop log.tag.DexMetadataHelper VERBOSE' */
-    public static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    public static final boolean DEBUG = false;
     /** $> adb shell 'setprop pm.dexopt.dm.require_manifest true' */
     private static final String PROPERTY_DM_JSON_MANIFEST_REQUIRED =
             "pm.dexopt.dm.require_manifest";

@@ -41,7 +41,7 @@ class PanningScalingHandler extends
         implements ScaleGestureDetector.OnScaleGestureListener {
 
     private static final String TAG = "PanningScalingHandler";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     interface MagnificationDelegate {
         boolean processScroll(int displayId, float distanceX, float distanceY);

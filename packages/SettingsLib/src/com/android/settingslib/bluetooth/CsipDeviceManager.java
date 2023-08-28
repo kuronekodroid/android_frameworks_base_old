@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 public class CsipDeviceManager {
     private static final String TAG = "CsipDeviceManager";
-    private static final boolean DEBUG = BluetoothUtils.D;
+    private static final boolean DEBUG = false;
 
     private final LocalBluetoothManager mBtManager;
     private final List<CachedBluetoothDevice> mCachedDevices;

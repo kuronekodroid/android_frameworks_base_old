@@ -61,7 +61,7 @@ import java.util.Objects;
 // TODO: check thread safety. We may need to use lock to protect variables.
 class SystemMediaRoute2Provider extends MediaRoute2Provider {
     private static final String TAG = "MR2SystemProvider";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     static final String DEFAULT_ROUTE_ID = "DEFAULT_ROUTE";
     static final String DEVICE_ROUTE_ID = "DEVICE_ROUTE";

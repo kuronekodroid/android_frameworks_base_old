@@ -98,7 +98,7 @@ import javax.inject.Inject;
 @SysUISingleton
 public class QSSecurityFooterUtils implements DialogInterface.OnClickListener {
     protected static final String TAG = "QSSecurityFooterUtils";
-    protected static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    protected static final boolean DEBUG = false;
     private static final boolean DEBUG_FORCE_VISIBLE = false;
 
     private static final String INTERACTION_JANK_TAG = "managed_device_info";

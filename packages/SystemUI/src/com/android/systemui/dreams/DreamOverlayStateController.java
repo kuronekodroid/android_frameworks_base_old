@@ -52,7 +52,7 @@ import javax.inject.Named;
 public class DreamOverlayStateController implements
         CallbackController<DreamOverlayStateController.Callback> {
     private static final String TAG = "DreamOverlayStateCtlr";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     public static final int STATE_DREAM_OVERLAY_ACTIVE = 1 << 0;
     public static final int STATE_LOW_LIGHT_ACTIVE = 1 << 1;

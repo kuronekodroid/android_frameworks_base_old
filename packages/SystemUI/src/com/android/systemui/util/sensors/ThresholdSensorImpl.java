@@ -38,7 +38,7 @@ import javax.inject.Inject;
  */
 public class ThresholdSensorImpl implements ThresholdSensor {
     private static final String TAG = "ThresholdSensor";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final AsyncSensorManager mSensorManager;
     private final Execution mExecution;

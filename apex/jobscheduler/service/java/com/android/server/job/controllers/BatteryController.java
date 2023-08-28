@@ -49,8 +49,7 @@ import java.util.function.Predicate;
  */
 public final class BatteryController extends RestrictingController {
     private static final String TAG = "JobScheduler.Battery";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     @GuardedBy("mLock")
     private final ArraySet<JobStatus> mTrackedTasks = new ArraySet<>();

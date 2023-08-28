@@ -52,7 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class BluetoothEventManager {
     private static final String TAG = "BluetoothEventManager";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final LocalBluetoothAdapter mLocalAdapter;
     private final CachedBluetoothDeviceManager mDeviceManager;

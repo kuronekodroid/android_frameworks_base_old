@@ -59,7 +59,7 @@ import java.util.List;
 public class RestrictedLockUtilsInternal extends RestrictedLockUtils {
 
     private static final String LOG_TAG = "RestrictedLockUtils";
-    private static final boolean DEBUG = Log.isLoggable(LOG_TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     /**
      * @return drawables for displaying with settings that are locked by a device admin.

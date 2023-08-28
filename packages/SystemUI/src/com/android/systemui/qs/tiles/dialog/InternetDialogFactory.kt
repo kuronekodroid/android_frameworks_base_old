@@ -31,7 +31,7 @@ import java.util.concurrent.Executor
 import javax.inject.Inject
 
 private const val TAG = "InternetDialogFactory"
-private val DEBUG = Log.isLoggable(TAG, Log.DEBUG)
+private val DEBUG = false;
 
 /**
  * Factory to create [InternetDialog] objects.

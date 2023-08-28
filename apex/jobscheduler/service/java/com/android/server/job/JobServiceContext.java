@@ -78,8 +78,8 @@ import com.android.server.tare.JobSchedulerEconomicPolicy;
  * calls to the client after they've specified jobFinished().
  */
 public final class JobServiceContext implements ServiceConnection {
-    private static final boolean DEBUG = JobSchedulerService.DEBUG;
-    private static final boolean DEBUG_STANDBY = JobSchedulerService.DEBUG_STANDBY;
+    private static final boolean DEBUG = false;
+    private static final boolean DEBUG_STANDBY = false;
 
     private static final String TAG = "JobServiceContext";
     /** Amount of time the JobScheduler waits for the initial service launch+bind. */

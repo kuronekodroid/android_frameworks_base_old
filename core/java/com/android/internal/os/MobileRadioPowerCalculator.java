@@ -26,7 +26,7 @@ import android.util.SparseArray;
 
 public class MobileRadioPowerCalculator extends PowerCalculator {
     private static final String TAG = "MobRadioPowerCalculator";
-    private static final boolean DEBUG = PowerCalculator.DEBUG;
+    private static final boolean DEBUG = false;
 
     private static final int NUM_SIGNAL_STRENGTH_LEVELS =
             CellSignalStrength.getNumSignalStrengthLevels();

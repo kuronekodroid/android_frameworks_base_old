@@ -25,7 +25,7 @@ import android.util.Slog;
 
 public class NetworkPolicyBackupHelper extends BlobBackupHelper {
     private static final String TAG = "NetworkPolicyBackupHelper";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // Current version of the blob schema
     static final int BLOB_VERSION = 1;

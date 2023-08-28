@@ -52,7 +52,7 @@ class FalsingCollectorImpl implements FalsingCollector {
 
     private static final String TAG = "FalsingCollector";
     private static final String PROXIMITY_SENSOR_TAG = "FalsingCollector";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final long GESTURE_PROCESSING_DELAY_MS = 100;
 
     private final FalsingDataProvider mFalsingDataProvider;

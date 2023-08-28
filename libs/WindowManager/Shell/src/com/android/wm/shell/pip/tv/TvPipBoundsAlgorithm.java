@@ -53,7 +53,7 @@ import java.util.Set;
 public class TvPipBoundsAlgorithm extends PipBoundsAlgorithm {
 
     private static final String TAG = TvPipBoundsAlgorithm.class.getSimpleName();
-    private static final boolean DEBUG = TvPipController.DEBUG;
+    private static final boolean DEBUG = false;
 
     private final @NonNull TvPipBoundsState mTvPipBoundsState;
 

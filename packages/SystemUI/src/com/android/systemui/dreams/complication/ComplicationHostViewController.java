@@ -51,7 +51,7 @@ import javax.inject.Named;
  */
 public class ComplicationHostViewController extends ViewController<ConstraintLayout> {
     private static final String TAG = "ComplicationHostVwCtrl";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final ComplicationLayoutEngine mLayoutEngine;
     private final DreamOverlayStateController mDreamOverlayStateController;

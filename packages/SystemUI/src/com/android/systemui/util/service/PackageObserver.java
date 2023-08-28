@@ -39,7 +39,7 @@ import javax.inject.Inject;
  */
 public class PackageObserver implements Observer {
     private static final String TAG = "PackageObserver";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private final ArrayList<WeakReference<Callback>> mCallbacks = Lists.newArrayList();
 

@@ -38,8 +38,7 @@ import java.io.PrintWriter;
  */
 public final class CarIdlenessTracker extends BroadcastReceiver implements IdlenessTracker {
     private static final String TAG = "JobScheduler.CarIdlenessTracker";
-    private static final boolean DEBUG = JobSchedulerService.DEBUG
-            || Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     public static final String ACTION_GARAGE_MODE_ON =
             "com.android.server.jobscheduler.GARAGE_MODE_ON";

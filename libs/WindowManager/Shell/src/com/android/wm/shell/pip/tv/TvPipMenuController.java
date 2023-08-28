@@ -54,7 +54,7 @@ import java.util.Objects;
  */
 public class TvPipMenuController implements PipMenuController, TvPipMenuView.Listener {
     private static final String TAG = "TvPipMenuController";
-    private static final boolean DEBUG = TvPipController.DEBUG;
+    private static final boolean DEBUG = false;
     private static final String BACKGROUND_WINDOW_TITLE = "PipBackgroundView";
 
     private final Context mContext;

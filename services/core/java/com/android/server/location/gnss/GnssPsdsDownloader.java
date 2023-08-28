@@ -43,7 +43,7 @@ class GnssPsdsDownloader {
     static final long PSDS_INTERVAL = 24 * 60 * 60 * 1000;
 
     private static final String TAG = "GnssPsdsDownloader";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final long MAXIMUM_CONTENT_LENGTH_BYTES = 1000000;  // 1MB.
     private static final int CONNECTION_TIMEOUT_MS = (int) TimeUnit.SECONDS.toMillis(30);
     private static final int READ_TIMEOUT_MS = (int) TimeUnit.SECONDS.toMillis(60);

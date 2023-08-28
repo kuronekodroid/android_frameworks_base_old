@@ -56,7 +56,7 @@ import javax.inject.Named;
 @SysUISingleton
 public class ThemeOverlayApplier implements Dumpable {
     private static final String TAG = "ThemeOverlayApplier";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     @VisibleForTesting
     static final String ANDROID_PACKAGE = "android";

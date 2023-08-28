@@ -33,7 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocalBluetoothLeBroadcastMetadata {
-    private static final boolean DEBUG = BluetoothUtils.D;
+    private static final boolean DEBUG = false;
     private static final String TAG = "LocalBluetoothLeBroadcastMetadata";
     private static final String METADATA_START = "<";
     private static final String METADATA_END = ">";

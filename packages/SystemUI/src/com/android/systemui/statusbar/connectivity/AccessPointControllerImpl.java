@@ -59,7 +59,7 @@ public class AccessPointControllerImpl implements AccessPointController,
         WifiPickerTracker.WifiPickerTrackerCallback,
         LifecycleOwner {
     private static final String TAG = "AccessPointController";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // This string extra specifies a network to open the connect dialog on, so the user can enter
     // network credentials.  This is used by quick settings for secured networks.

@@ -87,7 +87,7 @@ import javax.inject.Provider;
 @SysUISingleton
 public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, ProtoDumpable {
     private static final String TAG = "QSTileHost";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private static final int MAX_QS_INSTANCE_ID = 1 << 20;
 
     // Shared prefs that hold tile lifecycle info.

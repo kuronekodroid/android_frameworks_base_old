@@ -61,7 +61,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class LocalBluetoothLeBroadcast implements LocalBluetoothProfile {
     private static final String TAG = "LocalBluetoothLeBroadcast";
-    private static final boolean DEBUG = BluetoothUtils.D;
+    private static final boolean DEBUG = false;
 
     static final String NAME = "LE_AUDIO_BROADCAST";
     private static final String UNDERLINE = "_";

@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
  */
 class MediaRouter2ServiceImpl {
     private static final String TAG = "MR2ServiceImpl";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     // TODO: (In Android S or later) if we add callback methods for generic failures
     //       in MediaRouter2, remove this constant and replace the usages with the real request IDs.

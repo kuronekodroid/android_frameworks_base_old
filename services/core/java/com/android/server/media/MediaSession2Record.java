@@ -36,7 +36,7 @@ import java.io.PrintWriter;
 // TODO(jaewan): Do not call service method directly -- introduce listener instead.
 public class MediaSession2Record implements MediaSessionRecordImpl {
     private static final String TAG = "MediaSession2Record";
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
     private final Object mLock = new Object();
 
     @GuardedBy("mLock")

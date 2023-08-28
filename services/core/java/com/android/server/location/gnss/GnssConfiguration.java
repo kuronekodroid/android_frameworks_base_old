@@ -52,7 +52,7 @@ import java.util.Properties;
 public class GnssConfiguration {
     private static final String TAG = "GnssConfiguration";
 
-    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
+    private static final boolean DEBUG = false;
 
     private static final String DEBUG_PROPERTIES_FILE = "/etc/gps_debug.conf";
 
