@@ -393,11 +393,11 @@ public class ConversationLayout extends FrameLayout
                 = Notification.MessagingStyle.Message.getMessagesFromBundleArray(histMessages);
 
         // mUser now set (would be nice to avoid the side effect but WHATEVER)
-        setUser(extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON));
+        setUser(extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON, android.app.Person.class));
 
         // Append remote input history to newMessages (again, side effect is lame but WHATEVS)
         RemoteInputHistoryItem[] history = (RemoteInputHistoryItem[])
-                extras.getParcelableArray(Notification.EXTRA_REMOTE_INPUT_HISTORY_ITEMS);
+                extras.getParcelableArray(Notification.EXTRA_REMOTE_INPUT_HISTORY_ITEMS, android.app.RemoteInputHistoryItem.class);
         addRemoteInputHistoryToMessages(newMessages, history);
 
         boolean showSpinner =
@@ -927,7 +927,8 @@ public class ConversationLayout extends FrameLayout
                 message = messages.get(i - histSize);
             }
             boolean isNewGroup = currentGroup == null;
-            Person sender = message.getMessage().getSenderPerson();
+            Person sender =
+                    message.getMessage() == null ? null : message.getMessage().getSenderPerson();
             CharSequence key = getKey(sender);
             isNewGroup |= !TextUtils.equals(key, currentSenderKey);
             if (isNewGroup) {
@@ -1190,7 +1191,8 @@ public class ConversationLayout extends FrameLayout
             return null;
         }
         final MessagingMessage messagingMessage = mMessages.get(mMessages.size() - 1);
-        final CharSequence text = messagingMessage.getMessage().getText();
+        final CharSequence text = messagingMessage.getMessage() == null ? null
+                : messagingMessage.getMessage().getText();
         if (text == null && messagingMessage instanceof MessagingImageMessage) {
             final String unformatted =
                     getResources().getString(R.string.conversation_single_line_image_placeholder);

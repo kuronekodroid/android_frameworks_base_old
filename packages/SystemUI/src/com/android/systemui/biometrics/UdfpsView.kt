@@ -27,6 +27,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.Surface
 import android.widget.FrameLayout
+import com.android.settingslib.udfps.UdfpsOverlayParams
 import com.android.systemui.R
 import com.android.systemui.doze.DozeReceiver
 

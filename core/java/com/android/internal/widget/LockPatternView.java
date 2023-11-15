@@ -305,8 +305,9 @@ public class LockPatternView extends View {
         /**
          * A pattern was detected from the user.
          * @param pattern The pattern.
+         * @param patternSize The pattern size.
          */
-        void onPatternDetected(List<Cell> pattern);
+        void onPatternDetected(List<Cell> pattern, byte patternSize);
     }
 
     public LockPatternView(Context context) {
@@ -663,7 +664,7 @@ public class LockPatternView extends View {
     private void notifyPatternDetected() {
         sendAccessEvent(R.string.lockscreen_access_pattern_detected);
         if (mOnPatternListener != null) {
-            mOnPatternListener.onPatternDetected(mPattern);
+            mOnPatternListener.onPatternDetected(mPattern, mPatternSize);
         }
     }
 

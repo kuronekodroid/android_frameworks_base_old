@@ -102,11 +102,12 @@ public abstract class AbstractRemoteService<S extends AbstractRemoteService<S, I
 
     // Used just for debugging purposes (on dump)
     private long mNextUnbind;
+    // Used just for debugging purposes (on dump)
     private int mServiceExitReason;
     private int mServiceExitSubReason;
 
     /** Requests that have been scheduled, but that are not finished yet */
-    private final ArrayList<BasePendingRequest<S, I>> mUnfinishedRequests = new ArrayList<>();
+    protected final ArrayList<BasePendingRequest<S, I>> mUnfinishedRequests = new ArrayList<>();
 
     /**
      * Callback called when the service dies.
@@ -260,14 +261,10 @@ public abstract class AbstractRemoteService<S extends AbstractRemoteService<S, I
             // do nothing. The local binder so it can not throw it.
         }
         if (plistSlice == null) {
-            mServiceExitReason = ApplicationExitInfo.REASON_UNKNOWN;
-            mServiceExitSubReason = ApplicationExitInfo.SUBREASON_UNKNOWN;
             return;
         }
         List<ApplicationExitInfo> list = plistSlice.getList();
         if (list.isEmpty()) {
-            mServiceExitReason = ApplicationExitInfo.REASON_UNKNOWN;
-            mServiceExitSubReason = ApplicationExitInfo.SUBREASON_UNKNOWN;
             return;
         }
         ApplicationExitInfo info = list.get(0);
@@ -674,6 +671,11 @@ public abstract class AbstractRemoteService<S extends AbstractRemoteService<S, I
                     return false;
                 }
                 mCancelled = true;
+            }
+
+            S service = mWeakService.get();
+            if (service != null) {
+                service.finishRequest(this);
             }
 
             onCancel();

@@ -66,6 +66,7 @@ import com.android.server.accessibility.AccessibilityTraceManager;
 import com.android.server.statusbar.StatusBarManagerInternal;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -274,6 +275,19 @@ public class WindowMagnificationManagerTest {
     }
 
     @Test
+    public void persistScale_setValueWhenScaleIsOne_nothingChanged() {
+        mWindowMagnificationManager.setConnection(mMockConnection.getConnection());
+        final float persistedScale = mWindowMagnificationManager.getPersistedScale(TEST_DISPLAY);
+
+        mWindowMagnificationManager.setScale(TEST_DISPLAY, 1.0f);
+        mWindowMagnificationManager.persistScale(TEST_DISPLAY);
+
+        assertEquals(Settings.Secure.getFloatForUser(mResolver,
+                Settings.Secure.ACCESSIBILITY_DISPLAY_MAGNIFICATION_SCALE, 0f,
+                CURRENT_USER_ID), persistedScale);
+    }
+
+    @Test
     public void scaleSetterGetter_enabledOnTestDisplay_expectedValue() {
         mWindowMagnificationManager.setConnection(mMockConnection.getConnection());
         mWindowMagnificationManager.enableWindowMagnification(TEST_DISPLAY, 2.0f, NaN, NaN);
@@ -294,6 +308,7 @@ public class WindowMagnificationManagerTest {
                 MagnificationScaleProvider.MAX_SCALE);
     }
 
+    @Ignore("b/278816260: We could refer to b/182561174#comment4 for solution.")
     @Test
     public void logTrackingTypingFocus_processScroll_logDuration() {
         WindowMagnificationManager spyWindowMagnificationManager = spy(mWindowMagnificationManager);
@@ -521,6 +536,15 @@ public class WindowMagnificationManagerTest {
 
         mWindowMagnificationManager.removeMagnificationButton(TEST_DISPLAY);
         verify(mMockConnection.getConnection()).removeMagnificationButton(TEST_DISPLAY);
+    }
+
+    @Test
+    public void removeMagnificationSettingsPanel_hasConnection_invokeConnectionMethod()
+            throws RemoteException {
+        mWindowMagnificationManager.setConnection(mMockConnection.getConnection());
+
+        mWindowMagnificationManager.removeMagnificationSettingsPanel(TEST_DISPLAY);
+        verify(mMockConnection.getConnection()).removeMagnificationSettingsPanel(TEST_DISPLAY);
     }
 
     @Test

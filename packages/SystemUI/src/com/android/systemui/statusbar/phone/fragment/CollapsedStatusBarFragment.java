@@ -14,12 +14,6 @@
 
 package com.android.systemui.statusbar.phone.fragment;
 
-import static android.app.StatusBarManager.DISABLE2_SYSTEM_ICONS;
-import static android.app.StatusBarManager.DISABLE_CLOCK;
-import static android.app.StatusBarManager.DISABLE_NOTIFICATION_ICONS;
-import static android.app.StatusBarManager.DISABLE_ONGOING_CALL_CHIP;
-import static android.app.StatusBarManager.DISABLE_SYSTEM_INFO;
-
 import static com.android.systemui.statusbar.events.SystemStatusAnimationSchedulerKt.IDLE;
 import static com.android.systemui.statusbar.events.SystemStatusAnimationSchedulerKt.SHOWING_PERSISTENT_DOT;
 
@@ -27,7 +21,6 @@ import android.annotation.Nullable;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -47,22 +40,22 @@ import android.widget.LinearLayout;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.animation.Animator;
 
+import com.android.app.animation.Interpolators;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.systemui.Dependency;
 import com.android.systemui.Dumpable;
 import com.android.systemui.R;
-import com.android.systemui.animation.Interpolators;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dump.DumpManager;
 import com.android.systemui.flags.FeatureFlags;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
-import com.android.systemui.shade.NotificationPanelViewController;
 import com.android.systemui.shade.ShadeExpansionStateManager;
+import com.android.systemui.shade.ShadeViewController;
 import com.android.systemui.statusbar.CommandQueue;
-import com.android.systemui.statusbar.DisableFlagsLogger.DisableState;
 import com.android.systemui.statusbar.OperatorNameView;
 import com.android.systemui.statusbar.OperatorNameViewController;
 import com.android.systemui.statusbar.StatusBarState;
+import com.android.systemui.statusbar.disableflags.DisableFlagsLogger.DisableState;
 import com.android.systemui.statusbar.events.SystemStatusAnimationCallback;
 import com.android.systemui.statusbar.events.SystemStatusAnimationScheduler;
 import com.android.systemui.statusbar.phone.ClockController;
@@ -77,6 +70,9 @@ import com.android.systemui.statusbar.phone.fragment.dagger.StatusBarFragmentCom
 import com.android.systemui.statusbar.phone.fragment.dagger.StatusBarFragmentComponent.Startable;
 import com.android.systemui.statusbar.phone.ongoingcall.OngoingCallController;
 import com.android.systemui.statusbar.phone.ongoingcall.OngoingCallListener;
+import com.android.systemui.statusbar.pipeline.shared.ui.binder.CollapsedStatusBarViewBinder;
+import com.android.systemui.statusbar.pipeline.shared.ui.binder.StatusBarVisibilityChangeListener;
+import com.android.systemui.statusbar.pipeline.shared.ui.viewmodel.CollapsedStatusBarViewModel;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.window.StatusBarWindowStateController;
 import com.android.systemui.statusbar.window.StatusBarWindowStateListener;
@@ -113,15 +109,20 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private PhoneStatusBarView mStatusBar;
     private final StatusBarStateController mStatusBarStateController;
     private final KeyguardStateController mKeyguardStateController;
-    private final NotificationPanelViewController mNotificationPanelViewController;
+    private final ShadeViewController mShadeViewController;
     private LinearLayout mEndSideContent;
     private View mOngoingCallChip;
     private View mNotificationIconAreaInner;
     private View mNetworkTrafficHolderStart;
     private View mNetworkTrafficHolderCenter;
     private View mNetworkTrafficHolderEnd;
-    private int mDisabled1;
-    private int mDisabled2;
+    // Visibilities come in from external system callers via disable flags, but we also sometimes
+    // modify the visibilities internally. We need to store both so that we don't accidentally
+    // propagate our internally modified flags for too long.
+    private StatusBarVisibilityModel mLastSystemVisibility =
+            StatusBarVisibilityModel.createDefaultModel();
+    private StatusBarVisibilityModel mLastModifiedVisibility =
+            StatusBarVisibilityModel.createDefaultModel();
     private DarkIconManager mDarkIconManager;
     private final StatusBarFragmentComponent.Factory mStatusBarFragmentComponentFactory;
     private final CommandQueue mCommandQueue;
@@ -135,6 +136,8 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private final ShadeExpansionStateManager mShadeExpansionStateManager;
     private final StatusBarIconController mStatusBarIconController;
     private final CarrierConfigTracker mCarrierConfigTracker;
+    private final CollapsedStatusBarViewModel mCollapsedStatusBarViewModel;
+    private final CollapsedStatusBarViewBinder mCollapsedStatusBarViewBinder;
     private final StatusBarHideIconsForBouncerManager mStatusBarHideIconsForBouncerManager;
     private final StatusBarIconController.DarkIconManager.Factory mDarkIconManagerFactory;
     private final SecureSettings mSecureSettings;
@@ -153,7 +156,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private final OngoingCallListener mOngoingCallListener = new OngoingCallListener() {
         @Override
         public void onOngoingCallStateChanged(boolean animate) {
-            disable(getContext().getDisplayId(), mDisabled1, mDisabled2, animate);
+            updateStatusBarVisibilities(animate);
         }
     };
     private OperatorNameViewController mOperatorNameViewController;
@@ -191,11 +194,21 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private boolean mWaitingForWindowStateChangeAfterCameraLaunch = false;
 
     /**
+     * True when a transition from lockscreen to dream has started, but haven't yet received a
+     * status bar window state change afterward.
+     *
+     * Similar to [mWaitingForWindowStateChangeAfterCameraLaunch].
+     */
+    private boolean mTransitionFromLockscreenToDreamStarted = false;
+
+    /**
      * Listener that updates {@link #mWaitingForWindowStateChangeAfterCameraLaunch} when it receives
      * a new status bar window state.
      */
-    private final StatusBarWindowStateListener mStatusBarWindowStateListener = state ->
-            mWaitingForWindowStateChangeAfterCameraLaunch = false;
+    private final StatusBarWindowStateListener mStatusBarWindowStateListener = state -> {
+        mWaitingForWindowStateChangeAfterCameraLaunch = false;
+        mTransitionFromLockscreenToDreamStarted = false;
+    };
 
     @SuppressLint("ValidFragment")
     public CollapsedStatusBarFragment(
@@ -208,9 +221,11 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
             FeatureFlags featureFlags,
             StatusBarIconController statusBarIconController,
             StatusBarIconController.DarkIconManager.Factory darkIconManagerFactory,
+            CollapsedStatusBarViewModel collapsedStatusBarViewModel,
+            CollapsedStatusBarViewBinder collapsedStatusBarViewBinder,
             StatusBarHideIconsForBouncerManager statusBarHideIconsForBouncerManager,
             KeyguardStateController keyguardStateController,
-            NotificationPanelViewController notificationPanelViewController,
+            ShadeViewController shadeViewController,
             StatusBarStateController statusBarStateController,
             CommandQueue commandQueue,
             CarrierConfigTracker carrierConfigTracker,
@@ -230,10 +245,12 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         mShadeExpansionStateManager = shadeExpansionStateManager;
         mFeatureFlags = featureFlags;
         mStatusBarIconController = statusBarIconController;
+        mCollapsedStatusBarViewModel = collapsedStatusBarViewModel;
+        mCollapsedStatusBarViewBinder = collapsedStatusBarViewBinder;
         mStatusBarHideIconsForBouncerManager = statusBarHideIconsForBouncerManager;
         mDarkIconManagerFactory = darkIconManagerFactory;
         mKeyguardStateController = keyguardStateController;
-        mNotificationPanelViewController = notificationPanelViewController;
+        mShadeViewController = shadeViewController;
         mStatusBarStateController = statusBarStateController;
         mCommandQueue = commandQueue;
         mCarrierConfigTracker = carrierConfigTracker;
@@ -308,6 +325,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                 new StatusBarSystemEventAnimator(mEndSideContent, getResources());
         mCarrierConfigTracker.addCallback(mCarrierConfigCallback);
         mCarrierConfigTracker.addDefaultDataSubscriptionChangedListener(mDefaultDataListener);
+
+        mCollapsedStatusBarViewBinder.bind(
+                mStatusBar, mCollapsedStatusBarViewModel, mStatusBarVisibilityChangeListener);
     }
 
     @Override
@@ -417,8 +437,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         }
         notificationIconArea.addView(mNotificationIconAreaInner);
 
-        // #disable should have already been called, so use the disable values to set visibility.
-        updateNotificationIconAreaAndCallChip(mDisabled1, false);
+        updateNotificationIconAreaAndCallChip(/* animate= */ false);
     }
 
     /**
@@ -432,95 +451,103 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         return mStatusBarFragmentComponent;
     }
 
+    private StatusBarVisibilityChangeListener mStatusBarVisibilityChangeListener =
+            new StatusBarVisibilityChangeListener() {
+        @Override
+        public void onStatusBarVisibilityMaybeChanged() {
+            updateStatusBarVisibilities(/* animate= */ true);
+        }
+
+        @Override
+        public void onTransitionFromLockscreenToDreamStarted() {
+            mTransitionFromLockscreenToDreamStarted = true;
+        }
+    };
+
     @Override
     public void disable(int displayId, int state1, int state2, boolean animate) {
         if (displayId != getContext().getDisplayId()) {
             return;
         }
+        mCollapsedStatusBarFragmentLogger
+                .logDisableFlagChange(new DisableState(state1, state2));
+        mLastSystemVisibility =
+                StatusBarVisibilityModel.createModelFromFlags(state1, state2);
+        updateStatusBarVisibilities(animate);
+    }
 
-        int state1BeforeAdjustment = state1;
-        state1 = adjustDisableFlags(state1);
+    private void updateStatusBarVisibilities(boolean animate) {
+        StatusBarVisibilityModel previousModel = mLastModifiedVisibility;
+        StatusBarVisibilityModel newModel = calculateInternalModel(mLastSystemVisibility);
+        mCollapsedStatusBarFragmentLogger.logVisibilityModel(newModel);
+        mLastModifiedVisibility = newModel;
 
-        mCollapsedStatusBarFragmentLogger.logDisableFlagChange(
-                /* new= */ new DisableState(state1BeforeAdjustment, state2),
-                /* newAfterLocalModification= */ new DisableState(state1, state2));
-
-        final int old1 = mDisabled1;
-        final int diff1 = state1 ^ old1;
-        final int old2 = mDisabled2;
-        final int diff2 = state2 ^ old2;
-        mDisabled1 = state1;
-        mDisabled2 = state2;
-        if ((diff1 & DISABLE_SYSTEM_INFO) != 0 || ((diff2 & DISABLE2_SYSTEM_ICONS) != 0)) {
-            if ((state1 & DISABLE_SYSTEM_INFO) != 0 || ((state2 & DISABLE2_SYSTEM_ICONS) != 0)) {
-                hideEndSideContent(animate);
-                hideOperatorName(animate);
-            } else {
+        if (newModel.getShowSystemInfo() != previousModel.getShowSystemInfo()) {
+            if (newModel.getShowSystemInfo()) {
                 showEndSideContent(animate);
                 showOperatorName(animate);
+            } else {
+                hideEndSideContent(animate);
+                hideOperatorName(animate);
             }
         }
 
         // The ongoing call chip and notification icon visibilities are intertwined, so update both
         // if either change.
-        if (((diff1 & DISABLE_ONGOING_CALL_CHIP) != 0)
-                || ((diff1 & DISABLE_NOTIFICATION_ICONS) != 0)) {
-            updateNotificationIconAreaAndCallChip(state1, animate);
+        if (newModel.getShowNotificationIcons() != previousModel.getShowNotificationIcons()
+                || newModel.getShowOngoingCallChip() != previousModel.getShowOngoingCallChip()) {
+            updateNotificationIconAreaAndCallChip(animate);
         }
 
         // The clock may have already been hidden, but we might want to shift its
         // visibility to GONE from INVISIBLE or vice versa
-        if ((diff1 & DISABLE_CLOCK) != 0 ||
-                mClockController.getClock().getVisibility() != clockHiddenMode()) {
-            if ((state1 & DISABLE_CLOCK) != 0 || mIsClockBlacklisted) {
-                hideClock(animate);
-            } else {
+        if (newModel.getShowClock() != previousModel.getShowClock()
+                || mClockController.getClock().getVisibility() != clockHiddenMode()) {
+            if (newModel.getShowClock()) {
                 showClock(animate);
+            } else {
+                hideClock(animate);
             }
         }
     }
 
-    protected int adjustDisableFlags(int state) {
+    private StatusBarVisibilityModel calculateInternalModel(
+            StatusBarVisibilityModel externalModel) {
         boolean headsUpVisible =
                 mStatusBarFragmentComponent.getHeadsUpAppearanceController().shouldBeVisible();
 
         if (!mKeyguardStateController.isLaunchTransitionFadingAway()
                 && !mKeyguardStateController.isKeyguardFadingAway()
-                && shouldHideNotificationIcons()
+                && shouldHideStatusBar()
                 && !(mStatusBarStateController.getState() == StatusBarState.KEYGUARD
                         && headsUpVisible)) {
-            state |= DISABLE_NOTIFICATION_ICONS;
-            state |= DISABLE_SYSTEM_INFO;
             View clockView = mClockController.getClock();
             boolean isRightClock = clockView.getId() == R.id.clock_right;
-            if (!isRightClock) {
-                state |= DISABLE_CLOCK;
-            }
+            // Hide everything
+            return new StatusBarVisibilityModel(
+                    /* showClock= */ isRightClock,
+                    /* showNotificationIcons= */ false,
+                    /* showOngoingCallChip= */ false,
+                    /* showSystemInfo= */ false);
         }
 
-        if (mOngoingCallController.hasOngoingCall()) {
-            state &= ~DISABLE_ONGOING_CALL_CHIP;
-        } else {
-            state |= DISABLE_ONGOING_CALL_CHIP;
-        }
-
-        if (headsUpVisible) {
-            // Disable everything on the left side of the status bar, since the app name for the
-            // heads up notification appears there instead.
-            state |= DISABLE_CLOCK;
-            state |= DISABLE_ONGOING_CALL_CHIP;
-        }
-
-        return state;
+        boolean showClock = externalModel.getShowClock() && !headsUpVisible;
+        boolean showOngoingCallChip = mOngoingCallController.hasOngoingCall() && !headsUpVisible;
+        return new StatusBarVisibilityModel(
+                showClock,
+                externalModel.getShowNotificationIcons(),
+                showOngoingCallChip,
+                externalModel.getShowSystemInfo());
     }
 
     /**
      * Updates the visibility of the notification icon area and ongoing call chip based on disabled1
      * state.
      */
-    private void updateNotificationIconAreaAndCallChip(int state1, boolean animate) {
-        boolean disableNotifications = (state1 & DISABLE_NOTIFICATION_ICONS) != 0;
-        boolean hasOngoingCall = (state1 & DISABLE_ONGOING_CALL_CHIP) == 0;
+    private void updateNotificationIconAreaAndCallChip(boolean animate) {
+        StatusBarVisibilityModel visibilityModel = mLastModifiedVisibility;
+        boolean disableNotifications = !visibilityModel.getShowNotificationIcons();
+        boolean hasOngoingCall = visibilityModel.getShowOngoingCallChip();
 
         // Hide notifications if the disable flag is set or we have an ongoing call.
         if (disableNotifications || hasOngoingCall) {
@@ -541,9 +568,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         mOngoingCallController.notifyChipVisibilityChanged(showOngoingCallChip);
     }
 
-    private boolean shouldHideNotificationIcons() {
+    private boolean shouldHideStatusBar() {
         if (!mShadeExpansionStateManager.isClosed()
-                && mNotificationPanelViewController.hideStatusBarIconsWhenExpanded()) {
+                && mShadeViewController.shouldHideStatusBarIconsWhenExpanded()) {
             return true;
         }
 
@@ -557,6 +584,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         // icons don't remain hidden somehow) we double check that the camera is still showing, the
         // status bar window isn't hidden, and we're still occluded as well, though these checks
         // are typically unnecessary.
+        //
+        // TODO(b/273314977): Can this be deleted now that we have the
+        //   [isTransitioningFromLockscreenToOccluded] check below?
         final boolean hideIconsForSecureCamera =
                 (mWaitingForWindowStateChangeAfterCameraLaunch ||
                         !mStatusBarWindowStateController.windowIsShowing()) &&
@@ -564,6 +594,28 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                         mKeyguardStateController.isOccluded();
 
         if (hideIconsForSecureCamera) {
+            return true;
+        }
+
+        // Similar to [hideIconsForSecureCamera]: When dream is launched over lockscreen, the icons
+        // are momentarily visible because the dream animation has finished, but SysUI has not been
+        // informed that the dream is full-screen. For extra safety, we double-check that we're
+        // still dreaming.
+        final boolean hideIconsForDream =
+                mTransitionFromLockscreenToDreamStarted
+                        && mKeyguardUpdateMonitor.isDreaming()
+                        && mKeyguardStateController.isOccluded();
+        if (hideIconsForDream) {
+            return true;
+        }
+
+        // While the status bar is transitioning from lockscreen to an occluded, we don't yet know
+        // if the occluding activity is fullscreen or not. If it *is* fullscreen, we don't want to
+        // briefly show the status bar just to immediately hide it again. So, we wait for the
+        // transition to occluding to finish before allowing us to potentially show the status bar
+        // again. (This status bar is always hidden on keyguard, so it's safe to continue hiding it
+        // during this transition.) See b/273314977.
+        if (mCollapsedStatusBarViewModel.isTransitioningFromLockscreenToOccluded().getValue()) {
             return true;
         }
 
@@ -727,7 +779,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     @Override
     public void onDozingChanged(boolean isDozing) {
-        disable(getContext().getDisplayId(), mDisabled1, mDisabled2, false /* animate */);
+        updateStatusBarVisibilities(/* animate= */ false);
     }
 
     @Nullable
@@ -740,10 +792,6 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     @Override
     public Animator onSystemEventAnimationFinish(boolean hasPersistentDot) {
         return mSystemEventAnimator.onSystemEventAnimationFinish(hasPersistentDot);
-    }
-
-    private boolean isSystemIconAreaDisabled() {
-        return (mDisabled1 & DISABLE_SYSTEM_INFO) != 0 || (mDisabled2 & DISABLE2_SYSTEM_ICONS) != 0;
     }
 
     private void updateStatusBarLocation(int left, int right) {

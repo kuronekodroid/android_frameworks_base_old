@@ -16,6 +16,8 @@
 
 package com.android.systemui.doze;
 
+import static android.hardware.biometrics.BiometricAuthenticator.TYPE_FINGERPRINT;
+
 import static com.android.systemui.doze.DozeLog.REASON_SENSOR_TAP;
 import static com.android.systemui.doze.DozeLog.REASON_SENSOR_UDFPS_LONG_PRESS;
 import static com.android.systemui.plugins.SensorManagerPlugin.Sensor.TYPE_WAKE_LOCK_SCREEN;
@@ -151,14 +153,14 @@ public class DozeSensorsTest extends SysuiTestCase {
         mWakeLockScreenListener.onSensorChanged(mock(SensorManagerPlugin.SensorEvent.class));
         mTestableLooper.processAllMessages();
         verify(mCallback).onSensorPulse(eq(DozeLog.PULSE_REASON_SENSOR_WAKE_REACH),
-                anyFloat(), anyFloat(), eq(null));
+                eq(false), anyFloat(), anyFloat(), eq(null));
 
         mDozeSensors.requestTemporaryDisable();
         reset(mCallback);
         mWakeLockScreenListener.onSensorChanged(mock(SensorManagerPlugin.SensorEvent.class));
         mTestableLooper.processAllMessages();
         verify(mCallback, never()).onSensorPulse(eq(DozeLog.PULSE_REASON_SENSOR_WAKE_REACH),
-                anyFloat(), anyFloat(), eq(null));
+                eq(false), anyFloat(), anyFloat(), eq(null));
     }
 
     @Test
@@ -419,7 +421,7 @@ public class DozeSensorsTest extends SysuiTestCase {
 
         // WHEN enrollment changes to TRUE
         when(mAuthController.isUdfpsEnrolled(anyInt())).thenReturn(true);
-        mAuthControllerCallback.onEnrollmentsChanged();
+        mAuthControllerCallback.onEnrollmentsChanged(TYPE_FINGERPRINT);
 
         // THEN mConfigured = TRUE
         assertTrue(triggerSensor.mConfigured);

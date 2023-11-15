@@ -20,7 +20,6 @@ import static lineageos.providers.LineageSettings.System.STATUS_BAR_SHOW_BATTERY
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
@@ -99,8 +98,8 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
                 }
 
                 @Override
-                public void onIsOverheatedChanged(boolean isOverheated) {
-                    mView.onIsOverheatedChanged(isOverheated);
+                public void onIsBatteryDefenderChanged(boolean isBatteryDefender) {
+                    mView.onIsBatteryDefenderChanged(isBatteryDefender);
                 }
             };
 

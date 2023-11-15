@@ -70,11 +70,6 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
 
     private static final Uri BRIGHTNESS_MODE_URI =
             Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE);
-    private static final Uri BRIGHTNESS_FOR_VR_FLOAT_URI =
-            Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_FOR_VR_FLOAT);
-
-    private final float mMinimumBacklightForVr;
-    private final float mMaximumBacklightForVr;
 
     private final ImageView mIcon;
     private final int mDisplayId;
@@ -125,8 +120,6 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
             if (BRIGHTNESS_MODE_URI.equals(uri)) {
                 mBackgroundHandler.post(mUpdateModeRunnable);
                 mBackgroundHandler.post(mUpdateSliderRunnable);
-            } else if (BRIGHTNESS_FOR_VR_FLOAT_URI.equals(uri)) {
-                mBackgroundHandler.post(mUpdateSliderRunnable);
             } else {
                 mBackgroundHandler.post(mUpdateModeRunnable);
                 mBackgroundHandler.post(mUpdateSliderRunnable);
@@ -138,9 +131,6 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
             cr.unregisterContentObserver(this);
             cr.registerContentObserver(
                     BRIGHTNESS_MODE_URI,
-                    false, this, UserHandle.USER_ALL);
-            cr.registerContentObserver(
-                    BRIGHTNESS_FOR_VR_FLOAT_URI,
                     false, this, UserHandle.USER_ALL);
             mDisplayTracker.addBrightnessChangeCallback(mBrightnessListener,
                     new HandlerExecutor(mHandler));
@@ -309,10 +299,6 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
 
         mDisplayId = mContext.getDisplayId();
         PowerManager pm = context.getSystemService(PowerManager.class);
-        mMinimumBacklightForVr = pm.getBrightnessConstraint(
-                PowerManager.BRIGHTNESS_CONSTRAINT_TYPE_MINIMUM_VR);
-        mMaximumBacklightForVr = pm.getBrightnessConstraint(
-                PowerManager.BRIGHTNESS_CONSTRAINT_TYPE_MAXIMUM_VR);
 
         mDisplayManager = context.getSystemService(DisplayManager.class);
         mVrManager = IVrManager.Stub.asInterface(ServiceManager.getService(
@@ -349,17 +335,12 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
         final float maxBacklight;
         final int metric;
 
-        if (mIsVrModeEnabled) {
-            metric = MetricsEvent.ACTION_BRIGHTNESS_FOR_VR;
-            minBacklight = mMinimumBacklightForVr;
-            maxBacklight = mMaximumBacklightForVr;
-        } else {
-            metric = mAutomatic
-                    ? MetricsEvent.ACTION_BRIGHTNESS_AUTO
-                    : MetricsEvent.ACTION_BRIGHTNESS;
-            minBacklight = mBrightnessMin;
-            maxBacklight = mBrightnessMax;
-        }
+
+        metric = mAutomatic
+                ? MetricsEvent.ACTION_BRIGHTNESS_AUTO
+                : MetricsEvent.ACTION_BRIGHTNESS;
+        minBacklight = mBrightnessMin;
+        maxBacklight = mBrightnessMax;
         final float valFloat = MathUtils.min(
                 convertGammaToLinearFloat(value, minBacklight, maxBacklight),
                 maxBacklight);
@@ -419,15 +400,8 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
     }
 
     private void updateSlider(float brightnessValue, boolean inVrMode) {
-        final float min;
-        final float max;
-        if (inVrMode) {
-            min = mMinimumBacklightForVr;
-            max = mMaximumBacklightForVr;
-        } else {
-            min = mBrightnessMin;
-            max = mBrightnessMax;
-        }
+        final float min = mBrightnessMin;
+        final float max = mBrightnessMax;
 
         // Ensure the slider is in a fixed position first, then check if we should animate.
         if (mSliderAnimator != null && mSliderAnimator.isStarted()) {

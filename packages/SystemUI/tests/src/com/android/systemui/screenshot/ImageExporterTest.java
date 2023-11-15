@@ -45,7 +45,6 @@ import androidx.test.filters.MediumTest;
 
 import com.android.systemui.SysuiTestCase;
 import com.android.systemui.flags.FakeFeatureFlags;
-import com.android.systemui.flags.Flags;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -75,7 +74,7 @@ public class ImageExporterTest extends SysuiTestCase {
     private static final byte[] EXIF_FILE_TAG = "Exif\u0000\u0000".getBytes(US_ASCII);
 
     private static final ZonedDateTime CAPTURE_TIME =
-            ZonedDateTime.of(LocalDateTime.of(2020, 12, 15, 13, 15), ZoneId.of("EST"));
+            ZonedDateTime.of(LocalDateTime.of(2020, 12, 15, 13, 15), ZoneId.of("America/New_York"));
 
     private FakeFeatureFlags mFeatureFlags = new FakeFeatureFlags();
     @Mock
@@ -110,7 +109,6 @@ public class ImageExporterTest extends SysuiTestCase {
     @Test
     public void testImageExport() throws ExecutionException, InterruptedException, IOException {
         ContentResolver contentResolver = mContext.getContentResolver();
-        mFeatureFlags.set(Flags.SCREENSHOT_WORK_PROFILE_POLICY, true);
         ImageExporter exporter = new ImageExporter(contentResolver, mFeatureFlags);
 
         UUID requestId = UUID.fromString("3c11da99-9284-4863-b1d5-6f3684976814");
@@ -189,7 +187,6 @@ public class ImageExporterTest extends SysuiTestCase {
 
     @Test
     public void testSetUser() {
-        mFeatureFlags.set(Flags.SCREENSHOT_WORK_PROFILE_POLICY, true);
         ImageExporter exporter = new ImageExporter(mMockContentResolver, mFeatureFlags);
 
         UserHandle imageUserHande = UserHandle.of(10);
@@ -199,30 +196,12 @@ public class ImageExporterTest extends SysuiTestCase {
         Mockito.when(mMockContentResolver.insert(uriCaptor.capture(), Mockito.any())).thenReturn(
                 null);
         exporter.export(DIRECT_EXECUTOR, UUID.fromString("3c11da99-9284-4863-b1d5-6f3684976814"),
-                null, CAPTURE_TIME, imageUserHande);
+                null, CAPTURE_TIME, imageUserHande, null);
 
         Uri expected = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         expected = ContentProvider.maybeAddUserId(expected, imageUserHande.getIdentifier());
 
         assertEquals(expected, uriCaptor.getValue());
-    }
-
-    @Test
-    public void testSetUser_noWorkProfile() {
-        mFeatureFlags.set(Flags.SCREENSHOT_WORK_PROFILE_POLICY, false);
-        ImageExporter exporter = new ImageExporter(mMockContentResolver, mFeatureFlags);
-
-        UserHandle imageUserHandle = UserHandle.of(10);
-
-        ArgumentCaptor<Uri> uriCaptor = ArgumentCaptor.forClass(Uri.class);
-        // Capture the URI and then return null to bail out of export.
-        Mockito.when(mMockContentResolver.insert(uriCaptor.capture(), Mockito.any())).thenReturn(
-                null);
-        exporter.export(DIRECT_EXECUTOR, UUID.fromString("3c11da99-9284-4863-b1d5-6f3684976814"),
-                null, CAPTURE_TIME, imageUserHandle);
-
-        // The user handle should be ignored here since the flag is off.
-        assertEquals(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, uriCaptor.getValue());
     }
 
     @SuppressWarnings("SameParameterValue")

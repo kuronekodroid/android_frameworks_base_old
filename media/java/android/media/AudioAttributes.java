@@ -1289,6 +1289,8 @@ public final class AudioAttributes implements Parcelable {
         /**
          * Specifying if haptic should be muted or not when playing audio-haptic coupled data.
          * By default, haptic channels are disabled.
+         * <p>This will be ignored if the caller doesn't have the
+         * {@link android.Manifest.permission#VIBRATE} permission.
          * @param muted true to force muting haptic channels.
          * @return the same Builder instance.
          */
@@ -1434,6 +1436,8 @@ public final class AudioAttributes implements Parcelable {
         return new String("AudioAttributes:"
                 + " usage=" + usageToString()
                 + " content=" + contentTypeToString()
+                + (mSource != MediaRecorder.AudioSource.AUDIO_SOURCE_INVALID
+                    ? " source=" + MediaRecorder.toLogFriendlyAudioSource(mSource) : "")
                 + " flags=0x" + Integer.toHexString(mFlags).toUpperCase()
                 + " tags=" + mFormattedTags
                 + " bundle=" + (mBundle == null ? "null" : mBundle.toString()));

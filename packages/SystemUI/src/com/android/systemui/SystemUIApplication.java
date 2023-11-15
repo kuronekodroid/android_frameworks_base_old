@@ -16,7 +16,6 @@
 
 package com.android.systemui;
 
-import android.app.ActivityManager;
 import android.app.ActivityThread;
 import android.app.Application;
 import android.app.Notification;
@@ -29,13 +28,9 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
-import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.os.Trace;
 import android.os.UserHandle;
-import android.util.ArrayMap;
-import android.util.Dumpable;
-import android.util.DumpableContainer;
 import android.util.Log;
 import android.util.TimingsTraceLog;
 import android.view.SurfaceControl;
@@ -59,18 +54,12 @@ import javax.inject.Provider;
  * Application class for SystemUI.
  */
 public class SystemUIApplication extends Application implements
-        SystemUIAppComponentFactory.ContextInitializer, DumpableContainer {
+        SystemUIAppComponentFactory.ContextInitializer {
 
     public static final String TAG = "SystemUIService";
     private static final boolean DEBUG = false;
 
     private BootCompleteCacheImpl mBootCompleteCache;
-    private DumpManager mDumpManager;
-
-    /**
-     * Map of dumpables added externally.
-     */
-    private final ArrayMap<String, Dumpable> mDumpables = new ArrayMap<>();
 
     /**
      * Hold a reference on the stuff we start.
@@ -134,13 +123,6 @@ public class SystemUIApplication extends Application implements
                         + ThreadedRenderer.EGL_CONTEXT_PRIORITY_HIGH_IMG);
                 ThreadedRenderer.setContextPriority(
                         ThreadedRenderer.EGL_CONTEXT_PRIORITY_HIGH_IMG);
-            }
-
-            // Enable binder tracing on system server for calls originating from SysUI
-            try {
-                ActivityManager.getService().enableBinderTracing();
-            } catch (RemoteException e) {
-                Log.e(TAG, "Unable to enable binder tracing", e);
             }
 
             registerReceiver(new BroadcastReceiver() {
@@ -242,7 +224,7 @@ public class SystemUIApplication extends Application implements
             }
         }
 
-        mDumpManager = mSysUIComponent.createDumpManager();
+        DumpManager dumpManager = mSysUIComponent.createDumpManager();
 
         Log.v(TAG, "Starting SystemUI services for user " +
                 Process.myUserHandle().getIdentifier() + ".");
@@ -276,7 +258,7 @@ public class SystemUIApplication extends Application implements
                 notifyBootCompleted(mServices[i]);
             }
 
-            mDumpManager.registerDumpable(mServices[i].getClass().getName(), mServices[i]);
+            dumpManager.registerDumpable(mServices[i].getClass().getName(), mServices[i]);
         }
         mSysUIComponent.getInitController().executePostInitTasks();
         log.traceEnd();
@@ -349,36 +331,6 @@ public class SystemUIApplication extends Application implements
         Trace.endSection();
 
         return startable;
-    }
-
-    // TODO(b/217567642): add unit tests? There doesn't seem to be a SystemUiApplicationTest...
-    @Override
-    public boolean addDumpable(Dumpable dumpable) {
-        String name = dumpable.getDumpableName();
-        if (mDumpables.containsKey(name)) {
-            // This is normal because SystemUIApplication is an application context that is shared
-            // among multiple components
-            if (DEBUG) {
-                Log.d(TAG, "addDumpable(): ignoring " + dumpable + " as there is already a dumpable"
-                        + " with that name (" + name + "): " + mDumpables.get(name));
-            }
-            return false;
-        }
-        if (DEBUG) Log.d(TAG, "addDumpable(): adding '" + name + "' = " + dumpable);
-        mDumpables.put(name, dumpable);
-
-        // TODO(b/217567642): replace com.android.systemui.dump.Dumpable by
-        // com.android.util.Dumpable and get rid of the intermediate lambda
-        mDumpManager.registerDumpable(dumpable.getDumpableName(), dumpable::dump);
-        return true;
-    }
-
-    // TODO(b/217567642): implement
-    @Override
-    public boolean removeDumpable(Dumpable dumpable) {
-        Log.w(TAG, "removeDumpable(" + dumpable + "): not implemented");
-
-        return false;
     }
 
     @Override

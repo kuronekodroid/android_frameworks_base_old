@@ -27,7 +27,9 @@ import static android.app.WindowConfiguration.ACTIVITY_TYPE_UNDEFINED;
 import static android.app.WindowConfiguration.activityTypeToString;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.view.Display.DEFAULT_DISPLAY;
 import static android.view.Display.INVALID_DISPLAY;
+import static android.window.DisplayAreaOrganizer.FEATURE_UNDEFINED;
 
 import static com.android.server.wm.ActivityTaskManagerDebugConfig.TAG_ATM;
 import static com.android.server.wm.ActivityTaskManagerDebugConfig.TAG_WITH_CLASS_NAME;
@@ -46,6 +48,7 @@ import android.os.RemoteException;
 import android.os.UserHandle;
 import android.util.Slog;
 import android.view.RemoteAnimationAdapter;
+import android.window.RemoteTransition;
 import android.window.WindowContainerToken;
 
 import com.android.internal.annotations.VisibleForTesting;
@@ -141,7 +144,11 @@ public class SafeActivityOptions {
                 .setLaunchTaskDisplayArea(options.getLaunchTaskDisplayArea())
                 .setLaunchDisplayId(options.getLaunchDisplayId())
                 .setCallerDisplayId(options.getCallerDisplayId())
-                .setLaunchRootTask(options.getLaunchRootTask());
+                .setLaunchRootTask(options.getLaunchRootTask())
+                .setPendingIntentBackgroundActivityStartMode(
+                        options.getPendingIntentBackgroundActivityStartMode())
+                .setPendingIntentCreatorBackgroundActivityStartMode(
+                        options.getPendingIntentCreatorBackgroundActivityStartMode());
     }
 
     /**
@@ -287,8 +294,25 @@ public class SafeActivityOptions {
         }
         // Check if the caller is allowed to launch on the specified display area.
         final WindowContainerToken daToken = options.getLaunchTaskDisplayArea();
-        final TaskDisplayArea taskDisplayArea = daToken != null
+        TaskDisplayArea taskDisplayArea = daToken != null
                 ? (TaskDisplayArea) WindowContainer.fromBinder(daToken.asBinder()) : null;
+
+        // If we do not have a task display area token, check if the launch task display area
+        // feature id is specified.
+        if (taskDisplayArea == null) {
+            final int launchTaskDisplayAreaFeatureId = options.getLaunchTaskDisplayAreaFeatureId();
+            if (launchTaskDisplayAreaFeatureId != FEATURE_UNDEFINED) {
+                final int launchDisplayId = options.getLaunchDisplayId() == INVALID_DISPLAY
+                        ? DEFAULT_DISPLAY : options.getLaunchDisplayId();
+                final DisplayContent dc = supervisor.mRootWindowContainer
+                        .getDisplayContent(launchDisplayId);
+                if (dc != null) {
+                    taskDisplayArea = dc.getItemFromTaskDisplayAreas(tda ->
+                            tda.mFeatureId == launchTaskDisplayAreaFeatureId ? tda : null);
+                }
+            }
+        }
+
         if (aInfo != null && taskDisplayArea != null
                 && !supervisor.isCallerAllowedToLaunchOnTaskDisplayArea(callingPid, callingUid,
                 taskDisplayArea, aInfo)) {
@@ -358,6 +382,18 @@ public class SafeActivityOptions {
             final String msg = "Permission Denial: starting " + getIntentString(intent)
                     + " from " + callerApp + " (pid=" + callingPid
                     + ", uid=" + callingUid + ") with remoteAnimationAdapter";
+            Slog.w(TAG, msg);
+            throw new SecurityException(msg);
+        }
+
+        // Check permission for remote transitions
+        final RemoteTransition transition = options.getRemoteTransition();
+        if (transition != null && supervisor.mService.checkPermission(
+                CONTROL_REMOTE_APP_TRANSITION_ANIMATIONS, callingPid, callingUid)
+                != PERMISSION_GRANTED) {
+            final String msg = "Permission Denial: starting " + getIntentString(intent)
+                    + " from " + callerApp + " (pid=" + callingPid
+                    + ", uid=" + callingUid + ") with remoteTransition";
             Slog.w(TAG, msg);
             throw new SecurityException(msg);
         }

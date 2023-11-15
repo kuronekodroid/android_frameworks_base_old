@@ -22,6 +22,7 @@ import android.annotation.IntDef;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.annotation.SuppressLint;
+import android.annotation.TestApi;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Binder;
@@ -41,6 +42,7 @@ import java.util.List;
  * @see TaskFragmentTransaction.Change
  * @hide
  */
+@TestApi
 public final class TaskFragmentTransaction implements Parcelable {
 
     /** Unique token to represent this transaction. */
@@ -126,7 +128,7 @@ public final class TaskFragmentTransaction implements Parcelable {
     /** Change type: the status of the TaskFragment is changed. */
     public static final int TYPE_TASK_FRAGMENT_INFO_CHANGED = 2;
 
-    /** Change type: the TaskFragment is removed form the hierarchy. */
+    /** Change type: the TaskFragment is removed from the hierarchy. */
     public static final int TYPE_TASK_FRAGMENT_VANISHED = 3;
 
     /** Change type: the status of the parent leaf Task is changed. */

@@ -19,7 +19,6 @@ package com.android.server.wm;
 import static android.app.WindowConfiguration.WINDOWING_MODE_FULLSCREEN;
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSET;
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-import static android.util.RotationUtils.deltaRotation;
 import static android.view.WindowManager.LayoutParams.ROTATION_ANIMATION_CROSSFADE;
 import static android.view.WindowManager.LayoutParams.ROTATION_ANIMATION_JUMPCUT;
 import static android.view.WindowManager.LayoutParams.ROTATION_ANIMATION_ROTATE;
@@ -66,6 +65,7 @@ import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.ArraySet;
+import android.util.RotationUtils;
 import android.util.Slog;
 import android.util.TimeUtils;
 import android.util.proto.ProtoOutputStream;
@@ -137,6 +137,11 @@ public class DisplayRotation {
     private SettingsObserver mSettingsObserver;
     @NonNull
     private final DeviceStateController mDeviceStateController;
+    @NonNull
+    private final DisplayRotationCoordinator mDisplayRotationCoordinator;
+    @NonNull
+    @VisibleForTesting
+    final Runnable mDefaultDisplayRotationChangedCallback;
 
     @ScreenOrientation
     private int mCurrentAppOrientation = SCREEN_ORIENTATION_UNSPECIFIED;
@@ -246,17 +251,19 @@ public class DisplayRotation {
     private boolean mDemoRotationLock;
 
     DisplayRotation(WindowManagerService service, DisplayContent displayContent,
-            DisplayAddress displayAddress, @NonNull DeviceStateController deviceStateController) {
+            DisplayAddress displayAddress, @NonNull DeviceStateController deviceStateController,
+            @NonNull DisplayRotationCoordinator displayRotationCoordinator) {
         this(service, displayContent, displayAddress, displayContent.getDisplayPolicy(),
                 service.mDisplayWindowSettings, service.mContext, service.getWindowManagerLock(),
-                deviceStateController);
+                deviceStateController, displayRotationCoordinator);
     }
 
     @VisibleForTesting
     DisplayRotation(WindowManagerService service, DisplayContent displayContent,
             DisplayAddress displayAddress, DisplayPolicy displayPolicy,
             DisplayWindowSettings displayWindowSettings, Context context, Object lock,
-            @NonNull DeviceStateController deviceStateController) {
+            @NonNull DeviceStateController deviceStateController,
+            @NonNull DisplayRotationCoordinator displayRotationCoordinator) {
         mService = service;
         mDisplayContent = displayContent;
         mDisplayPolicy = displayPolicy;
@@ -278,6 +285,19 @@ public class DisplayRotation {
 
         int defaultRotation = readDefaultDisplayRotation(displayAddress);
         mRotation = defaultRotation;
+
+        mDisplayRotationCoordinator = displayRotationCoordinator;
+        if (isDefaultDisplay) {
+            mDisplayRotationCoordinator.setDefaultDisplayDefaultRotation(mRotation);
+        }
+        mDefaultDisplayRotationChangedCallback = this::updateRotationAndSendNewConfigIfChanged;
+
+        if (DisplayRotationCoordinator.isSecondaryInternalDisplay(displayContent)
+                && mDeviceStateController
+                        .shouldMatchBuiltInDisplayOrientationToReverseDefaultDisplay()) {
+            mDisplayRotationCoordinator.setDefaultDisplayRotationChangedCallback(
+                    mDefaultDisplayRotationChangedCallback);
+        }
 
         if (isDefaultDisplay) {
             final Handler uiHandler = UiThread.getHandler();
@@ -496,6 +516,7 @@ public class DisplayRotation {
             }
 
             if (mDisplayContent.inTransition()
+                    && mDisplayContent.getDisplayPolicy().isScreenOnFully()
                     && !mDisplayContent.mTransitionController.useShellTransitionsRotation()) {
                 // Rotation updates cannot be performed while the previous rotation change animation
                 // is still in progress. Skip this update. We will try updating again after the
@@ -530,8 +551,11 @@ public class DisplayRotation {
             return false;
         }
 
+        @Surface.Rotation
         final int oldRotation = mRotation;
+        @ScreenOrientation
         final int lastOrientation = mLastOrientation;
+        @Surface.Rotation
         int rotation = rotationForOrientation(lastOrientation, oldRotation);
         // Use the saved rotation for tabletop mode, if set.
         if (mFoldController != null && mFoldController.shouldRevertOverriddenRotation()) {
@@ -543,6 +567,14 @@ public class DisplayRotation {
                     Surface.rotationToString(oldRotation),
                     Surface.rotationToString(prevRotation));
         }
+
+        if (DisplayRotationCoordinator.isSecondaryInternalDisplay(mDisplayContent)
+                && mDeviceStateController
+                        .shouldMatchBuiltInDisplayOrientationToReverseDefaultDisplay()) {
+            rotation = RotationUtils.reverseRotationDirectionAroundZAxis(
+                    mDisplayRotationCoordinator.getDefaultDisplayCurrentRotation());
+        }
+
         ProtoLog.v(WM_DEBUG_ORIENTATION,
                 "Computed rotation=%s (%d) for display id=%d based on lastOrientation=%s (%d) and "
                         + "oldRotation=%s (%d)",
@@ -561,6 +593,10 @@ public class DisplayRotation {
             return false;
         }
 
+        if (isDefaultDisplay) {
+            mDisplayRotationCoordinator.onDefaultDisplayRotationChanged(rotation);
+        }
+
         // Preemptively cancel the running recents animation -- SysUI can't currently handle this
         // case properly since the signals it receives all happen post-change. We do this earlier
         // in the rotation flow, since DisplayContent.updateDisplayOverrideConfigurationLocked seems
@@ -575,13 +611,10 @@ public class DisplayRotation {
                 "Display id=%d rotation changed to %d from %d, lastOrientation=%d",
                         displayId, rotation, oldRotation, lastOrientation);
 
-        if (deltaRotation(oldRotation, rotation) != Surface.ROTATION_180) {
-            mDisplayContent.mWaitingForConfig = true;
-        }
-
         mRotation = rotation;
 
         mDisplayContent.setLayoutNeeded();
+        mDisplayContent.mWaitingForConfig = true;
 
         if (mDisplayContent.mTransitionController.isShellTransitionsEnabled()) {
             final boolean wasCollecting = mDisplayContent.mTransitionController.isCollecting();
@@ -635,7 +668,8 @@ public class DisplayRotation {
 
         if (mDisplayContent.mTransitionController.isShellTransitionsEnabled()) {
             if (!mDisplayContent.mTransitionController.isCollecting()) {
-                throw new IllegalStateException("Trying to rotate outside a transition");
+                // The remote may be too slow to response before transition timeout.
+                Slog.e(TAG, "Trying to continue rotation outside a transition");
             }
             mDisplayContent.mTransitionController.collect(mDisplayContent);
         }
@@ -919,14 +953,8 @@ public class DisplayRotation {
     }
 
     void freezeRotation(int rotation) {
-        if (mDeviceStateController.shouldReverseRotationDirectionAroundZAxis()) {
-            // Flipping 270 and 90 has the same effect as changing the direction which rotation is
-            // applied.
-            if (rotation == Surface.ROTATION_90) {
-                rotation = Surface.ROTATION_270;
-            } else if (rotation == Surface.ROTATION_270) {
-                rotation = Surface.ROTATION_90;
-            }
+        if (mDeviceStateController.shouldReverseRotationDirectionAroundZAxis(mDisplayContent)) {
+            rotation = RotationUtils.reverseRotationDirectionAroundZAxis(rotation);
         }
 
         rotation = (rotation == -1) ? mRotation : rotation;
@@ -1193,20 +1221,15 @@ public class DisplayRotation {
             return mUserRotation;
         }
 
+        @Surface.Rotation
         int sensorRotation = mOrientationListener != null
                 ? mOrientationListener.getProposedRotation() // may be -1
                 : -1;
         if (mFoldController != null && mFoldController.shouldIgnoreSensorRotation()) {
             sensorRotation = -1;
         }
-        if (mDeviceStateController.shouldReverseRotationDirectionAroundZAxis()) {
-            // Flipping 270 and 90 has the same effect as changing the direction which rotation is
-            // applied.
-            if (sensorRotation == Surface.ROTATION_90) {
-                sensorRotation = Surface.ROTATION_270;
-            } else if (sensorRotation == Surface.ROTATION_270) {
-                sensorRotation = Surface.ROTATION_90;
-            }
+        if (mDeviceStateController.shouldReverseRotationDirectionAroundZAxis(mDisplayContent)) {
+            sensorRotation = RotationUtils.reverseRotationDirectionAroundZAxis(sensorRotation);
         }
         mLastSensorRotation = sensorRotation;
         if (sensorRotation < 0) {
@@ -1220,11 +1243,8 @@ public class DisplayRotation {
                 mDisplayPolicy.isCarDockEnablesAccelerometer();
         final boolean deskDockEnablesAccelerometer =
                 mDisplayPolicy.isDeskDockEnablesAccelerometer();
-        final boolean deskDockRespectsNoSensorAndLockedWithoutAccelerometer =
-                mDisplayPolicy.isDeskDockRespectsNoSensorAndLockedWithoutAccelerometer()
-                        && (orientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED
-                                || orientation == ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
+        @Surface.Rotation
         final int preferredRotation;
         if (!isDefaultDisplay) {
             // For secondary displays we ignore things like displays sensors, docking mode and
@@ -1243,10 +1263,10 @@ public class DisplayRotation {
                 || dockMode == Intent.EXTRA_DOCK_STATE_LE_DESK
                 || dockMode == Intent.EXTRA_DOCK_STATE_HE_DESK)
                 && (deskDockEnablesAccelerometer || mDeskDockRotation >= 0)
-                && !deskDockRespectsNoSensorAndLockedWithoutAccelerometer) {
+                && !(orientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED
+                        || orientation == ActivityInfo.SCREEN_ORIENTATION_NOSENSOR)) {
             // Ignore sensor when in desk dock unless explicitly enabled.
-            // This case can override the behavior of NOSENSOR, and can also
-            // enable 180 degree rotation while docked.
+            // This case can enable 180 degree rotation while docked.
             preferredRotation = deskDockEnablesAccelerometer ? sensorRotation : mDeskDockRotation;
         } else if (hdmiPlugged && mDemoHdmiRotationLock) {
             // Ignore sensor when plugged into HDMI when demo HDMI rotation lock enabled.
@@ -1528,6 +1548,15 @@ public class DisplayRotation {
         }
     }
 
+    void dispatchProposedRotation(@Surface.Rotation int rotation) {
+        if (mService.mRotationWatcherController.hasProposedRotationListeners()) {
+            synchronized (mLock) {
+                mService.mRotationWatcherController.dispatchProposedRotation(
+                        mDisplayContent, rotation);
+            }
+        }
+    }
+
     private static String allowAllRotationsToString(int allowAll) {
         switch (allowAll) {
             case -1:
@@ -1548,6 +1577,7 @@ public class DisplayRotation {
     }
 
     void onDisplayRemoved() {
+        removeDefaultDisplayRotationChangedCallback();
         if (mFoldController != null) {
             mFoldController.onDisplayRemoved();
         }
@@ -1614,6 +1644,12 @@ public class DisplayRotation {
         }
 
         return shouldUpdateRotation;
+    }
+
+    void removeDefaultDisplayRotationChangedCallback() {
+        if (DisplayRotationCoordinator.isSecondaryInternalDisplay(mDisplayContent)) {
+            mDisplayRotationCoordinator.removeDefaultDisplayRotationChangedCallback();
+        }
     }
 
     /**
@@ -1707,7 +1743,9 @@ public class DisplayRotation {
     }
 
     /**
-     * Called by the DeviceStateManager callback when the device state changes.
+     * Called by the display manager just before it applied the device state, it is guaranteed
+     * that in case of physical display change the {@link DisplayRotation#physicalDisplayChanged}
+     * method will be invoked *after* this one.
      */
     void foldStateChanged(DeviceStateController.DeviceState deviceState) {
         if (mFoldController != null) {
@@ -2030,6 +2068,7 @@ public class DisplayRotation {
             ProtoLog.v(WM_DEBUG_ORIENTATION, "onProposedRotationChanged, rotation=%d", rotation);
             // Send interaction power boost to improve redraw performance.
             mService.mPowerManagerInternal.setPowerBoost(Boost.INTERACTION, 0);
+            dispatchProposedRotation(rotation);
             if (isRotationChoiceAllowed(rotation)) {
                 mRotationChoiceShownToUserForConfirmation = rotation;
                 final boolean isValid = isValidRotationChoice(rotation);

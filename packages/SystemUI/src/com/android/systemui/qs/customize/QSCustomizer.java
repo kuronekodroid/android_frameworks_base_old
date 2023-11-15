@@ -20,9 +20,6 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -78,10 +75,6 @@ public class QSCustomizer extends LinearLayout {
         toolbar.setNavigationIcon(
                 getResources().getDrawable(value.resourceId, mContext.getTheme()));
 
-        SpannableString resetText = new SpannableString(
-                mContext.getString(com.android.internal.R.string.reset));
-        resetText.setSpan(new ForegroundColorSpan(isNightMode() ?
-                Color.WHITE : Color.BLACK), 0, resetText.length(), 0);
         toolbar.getMenu().add(Menu.NONE, MENU_RESET, 0, com.android.internal.R.string.reset)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         toolbar.setTitle(R.string.qs_edit);
@@ -92,11 +85,6 @@ public class QSCustomizer extends LinearLayout {
         mRecyclerView.setItemAnimator(animator);
 
         updateTransparentViewHeight();
-    }
-
-    private boolean isNightMode() {
-        return (mContext.getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
     }
 
     void updateResources() {
@@ -122,11 +110,18 @@ public class QSCustomizer extends LinearLayout {
         mQs = qs;
     }
 
+    private void reloadAdapterTileHeight(@Nullable RecyclerView.Adapter adapter) {
+        if (adapter instanceof TileAdapter) {
+            ((TileAdapter) adapter).reloadTileHeight();
+        }
+    }
+
     /** Animate and show QSCustomizer panel.
      * @param x,y Location on screen of {@code edit} button to determine center of animation.
      */
     void show(int x, int y, TileAdapter tileAdapter) {
         if (!isShown) {
+            reloadAdapterTileHeight(tileAdapter);
             mRecyclerView.getLayoutManager().scrollToPosition(0);
             int[] containerLocation = findViewById(R.id.customize_container).getLocationOnScreen();
             mX = x - containerLocation[0];
@@ -144,6 +139,7 @@ public class QSCustomizer extends LinearLayout {
 
     void showImmediately() {
         if (!isShown) {
+            reloadAdapterTileHeight(mRecyclerView.getAdapter());
             mRecyclerView.getLayoutManager().scrollToPosition(0);
             setVisibility(VISIBLE);
             mClipper.cancelAnimator();

@@ -93,12 +93,12 @@ open class QSTileViewImpl @JvmOverloads constructor(
         }
 
     private val colorActive = Utils.getColorAttrDefaultColor(context,
-            android.R.attr.colorAccent)
+            com.android.internal.R.attr.colorAccentPrimary)
     private val colorInactive = Utils.getColorAttrDefaultColor(context, R.attr.offStateColor)
     private val colorUnavailable = Utils.applyAlpha(UNAVAILABLE_ALPHA, colorInactive)
 
-    private val colorLabelActive = Utils.getColorAttrDefaultColor(context,
-            com.android.internal.R.attr.textColorPrimaryInverse)
+    private val colorLabelActive =
+            Utils.getColorAttrDefaultColor(context, com.android.internal.R.attr.textColorOnAccent)
     private val colorLabelInactive =
             Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary)
     private val colorLabelUnavailable =
@@ -310,9 +310,15 @@ open class QSTileViewImpl @JvmOverloads constructor(
     }
 
     override fun onStateChanged(state: QSTile.State) {
-        post {
-            handleStateChanged(state)
-        }
+        // We cannot use the handler here because sometimes, the views are not attached (if they
+        // are in a page that the ViewPager hasn't attached). Instead, we use a runnable where
+        // all its instances are `equal` to each other, so they can be used to remove them from the
+        // queue.
+        // This means that at any given time there's at most one enqueued runnable to change state.
+        // However, as we only ever care about the last state posted, this is fine.
+        val runnable = StateChangeRunnable(state.copy())
+        removeCallbacks(runnable)
+        post(runnable)
     }
 
     override fun getDetailY(): Int {
@@ -379,6 +385,11 @@ open class QSTileViewImpl @JvmOverloads constructor(
         super.onInitializeAccessibilityNodeInfo(info)
         // Clear selected state so it is not announce by talkback.
         info.isSelected = false
+        info.text = if (TextUtils.isEmpty(secondaryLabel.text)) {
+            "${label.text}"
+        } else {
+            "${label.text}, ${secondaryLabel.text}"
+        }
         if (lastDisabledByPolicy) {
             info.addAction(
                     AccessibilityNodeInfo.AccessibilityAction(
@@ -396,12 +407,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
                 accessibilityClass
             }
             if (Switch::class.java.name == accessibilityClass) {
-                val label = resources.getString(
-                        if (tileState) R.string.switch_bar_on else R.string.switch_bar_off)
-                // Set the text here for tests in
-                // android.platform.test.scenario.sysui.quicksettings. Can be removed when
-                // UiObject2 has a new getStateDescription() API and tests are updated.
-                info.text = label
                 info.isChecked = tileState
                 info.isCheckable = true
                 if (isLongClickable) {
@@ -490,7 +495,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
         }
 
         // Colors
-        if (state.state != lastState || state.disabledByPolicy || lastDisabledByPolicy) {
+        if (state.state != lastState || state.disabledByPolicy != lastDisabledByPolicy) {
             singleAnimator.cancel()
             mQsLogger?.logTileBackgroundColorUpdateIfInternetTile(
                     state.spec,
@@ -650,6 +655,23 @@ open class QSTileViewImpl @JvmOverloads constructor(
             secondaryLabel.currentTextColor,
             chevronView.imageTintList?.defaultColor ?: 0
     )
+
+    inner class StateChangeRunnable(private val state: QSTile.State) : Runnable {
+        override fun run() {
+            handleStateChanged(state)
+        }
+
+        // We want all instances of this runnable to be equal to each other, so they can be used to
+        // remove previous instances from the Handler/RunQueue of this view
+        override fun equals(other: Any?): Boolean {
+            return other is StateChangeRunnable
+        }
+
+        // This makes sure that all instances have the same hashcode (because they are `equal`)
+        override fun hashCode(): Int {
+            return StateChangeRunnable::class.hashCode()
+        }
+    }
 }
 
 fun constrainSquishiness(squish: Float): Float {

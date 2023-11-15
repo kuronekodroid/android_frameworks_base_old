@@ -43,6 +43,7 @@ import com.android.systemui.classifier.FalsingManagerFake;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.qs.QSHost;
+import com.android.systemui.qs.QsEventLogger;
 import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.statusbar.connectivity.IconState;
 import com.android.systemui.statusbar.connectivity.NetworkController;
@@ -94,6 +95,8 @@ public class CastTileTest extends SysuiTestCase {
     private QSLogger mQSLogger;
     @Mock
     private DialogLaunchAnimator mDialogLaunchAnimator;
+    @Mock
+    private QsEventLogger mUiEventLogger;
 
     private TestableLooper mTestableLooper;
     private CastTile mCastTile;
@@ -107,6 +110,7 @@ public class CastTileTest extends SysuiTestCase {
 
         mCastTile = new CastTile(
                 mHost,
+                mUiEventLogger,
                 mTestableLooper.getLooper(),
                 new Handler(mTestableLooper.getLooper()),
                 new FalsingManagerFake(),
@@ -156,7 +160,7 @@ public class CastTileTest extends SysuiTestCase {
         WifiIndicators indicators = new WifiIndicators(
                 false, mock(IconState.class),
                 qsIcon, false,false, "",
-                false, "");
+                false, "", true);
         mSignalCallback.setWifiIndicators(indicators);
         mTestableLooper.processAllMessages();
 
@@ -169,7 +173,7 @@ public class CastTileTest extends SysuiTestCase {
         WifiIndicators indicators = new WifiIndicators(
                 true, mock(IconState.class),
                 qsIcon, false,false, "",
-                false, "");
+                false, "", true);
         mSignalCallback.setWifiIndicators(indicators);
         mTestableLooper.processAllMessages();
 
@@ -181,7 +185,7 @@ public class CastTileTest extends SysuiTestCase {
         WifiIndicators indicators = new WifiIndicators(
                 true, mock(IconState.class),
                 qsIcon, false,false, "",
-                false, "");
+                false, "", true);
         mSignalCallback.setWifiIndicators(indicators);
         mTestableLooper.processAllMessages();
     }

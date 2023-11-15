@@ -37,7 +37,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.res.Configuration;
-import android.hardware.display.DisplayManager;
 import android.testing.AndroidTestingRunner;
 import android.testing.TestableLooper.RunWithLooper;
 import android.util.SparseArray;
@@ -95,7 +94,6 @@ public class NavigationBarControllerTest extends SysuiTestCase {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DisplayManager displayManager = mContext.getSystemService(DisplayManager.class);
         mNavigationBarController = spy(
                 new NavigationBarController(mContext,
                         mock(OverviewProxyService.class),
@@ -144,7 +142,7 @@ public class NavigationBarControllerTest extends SysuiTestCase {
     @Test
     public void testCreateNavigationBarsIncludeDefaultTrue() {
         // Large screens may be using taskbar and the logic is different
-        mNavigationBarController.mIsLargeScreen = false;
+        mNavigationBarController.mTaskbarShowing = false;
         doNothing().when(mNavigationBarController).createNavigationBar(any(), any(), any());
 
         mNavigationBarController.createNavigationBars(true, null);

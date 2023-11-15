@@ -62,12 +62,14 @@ import com.android.systemui.classifier.FalsingCollector;
 import com.android.systemui.dump.DumpManager;
 import com.android.systemui.flags.FeatureFlags;
 import com.android.systemui.fragments.FragmentHostManager;
+import com.android.systemui.keyguard.domain.interactor.KeyguardFaceAuthInteractor;
 import com.android.systemui.media.controls.pipeline.MediaDataManager;
 import com.android.systemui.media.controls.ui.MediaHierarchyManager;
 import com.android.systemui.plugins.FalsingManager;
 import com.android.systemui.plugins.qs.QS;
 import com.android.systemui.qs.QSFragment;
 import com.android.systemui.screenrecord.RecordingController;
+import com.android.systemui.shade.data.repository.ShadeRepository;
 import com.android.systemui.shade.transition.ShadeTransitionController;
 import com.android.systemui.statusbar.LockscreenShadeTransitionController;
 import com.android.systemui.statusbar.NotificationRemoteInputManager;
@@ -81,12 +83,16 @@ import com.android.systemui.statusbar.notification.stack.NotificationStackScroll
 import com.android.systemui.statusbar.phone.KeyguardBottomAreaView;
 import com.android.systemui.statusbar.phone.KeyguardBypassController;
 import com.android.systemui.statusbar.phone.KeyguardStatusBarView;
+import com.android.systemui.statusbar.phone.LightBarController;
 import com.android.systemui.statusbar.phone.LockscreenGestureLogger;
 import com.android.systemui.statusbar.phone.ScrimController;
 import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 import com.android.systemui.statusbar.phone.StatusBarTouchableRegionManager;
 import com.android.systemui.statusbar.policy.CastController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
+import com.android.systemui.tuner.TunerService;
+
+import dagger.Lazy;
 
 import org.junit.After;
 import org.junit.Before;
@@ -97,8 +103,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
-
-import dagger.Lazy;
 
 @SmallTest
 @RunWith(AndroidTestingRunner.class)
@@ -131,6 +135,7 @@ public class QuickSettingsControllerTest extends SysuiTestCase {
     @Mock private PulseExpansionHandler mPulseExpansionHandler;
     @Mock private NotificationRemoteInputManager mNotificationRemoteInputManager;
     @Mock private StatusBarKeyguardViewManager mStatusBarKeyguardViewManager;
+    @Mock private LightBarController mLightBarController;
     @Mock private NotificationStackScrollLayoutController mNotificationStackScrollLayoutController;
     @Mock private LockscreenShadeTransitionController mLockscreenShadeTransitionController;
     @Mock private NotificationShadeDepthController mNotificationShadeDepthController;
@@ -155,6 +160,7 @@ public class QuickSettingsControllerTest extends SysuiTestCase {
     @Mock private DumpManager mDumpManager;
     @Mock private UiEventLogger mUiEventLogger;
     @Mock private CastController mCastController;
+    @Mock private TunerService mTunerService;
 
     private SysuiStatusBarStateController mStatusBarStateController;
 
@@ -221,6 +227,7 @@ public class QuickSettingsControllerTest extends SysuiTestCase {
                 mNotificationRemoteInputManager,
                 mShadeExpansionStateManager,
                 mStatusBarKeyguardViewManager,
+                mLightBarController,
                 mNotificationStackScrollLayoutController,
                 mLockscreenShadeTransitionController,
                 mNotificationShadeDepthController,
@@ -242,7 +249,11 @@ public class QuickSettingsControllerTest extends SysuiTestCase {
                 mFeatureFlags,
                 mInteractionJankMonitor,
                 mShadeLogger,
-                mCastController
+                mDumpManager,
+                mock(KeyguardFaceAuthInteractor.class),
+                mock(ShadeRepository.class),
+                mCastController,
+                mTunerService
         );
 
         mFragmentListener = mQsController.getQsFragmentListener();
@@ -570,6 +581,30 @@ public class QuickSettingsControllerTest extends SysuiTestCase {
         openLockedQS();
 
         verify(mQs).setQsVisible(true);
+    }
+
+    @Test
+    public void calculateBottomCornerRadius_scrimScaleMax() {
+        when(mScrimController.getBackScaling()).thenReturn(1.0f);
+        assertThat(mQsController.calculateBottomCornerRadius(0.0f)).isEqualTo(0);
+    }
+
+    @Test
+    public void calculateBottomCornerRadius_scrimScaleMin() {
+        when(mScrimController.getBackScaling())
+                .thenReturn(mNotificationPanelViewController.SHADE_BACK_ANIM_MIN_SCALE);
+        assertThat(mQsController.calculateBottomCornerRadius(0.0f))
+                .isEqualTo(mQsController.getScrimCornerRadius());
+    }
+
+    @Test
+    public void calculateBottomCornerRadius_scrimScaleCutoff() {
+        float ratio = 1 / mQsController.calculateBottomRadiusProgress();
+        float cutoffScale = 1 - mNotificationPanelViewController.SHADE_BACK_ANIM_MIN_SCALE / ratio;
+        when(mScrimController.getBackScaling())
+                .thenReturn(cutoffScale);
+        assertThat(mQsController.calculateBottomCornerRadius(0.0f))
+                .isEqualTo(mQsController.getScrimCornerRadius());
     }
 
     private void lockScreen() {

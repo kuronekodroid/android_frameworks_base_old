@@ -85,13 +85,7 @@ class FooterActionsViewModelTest : SysuiTestCase() {
                 )
             )
         assertThat(settings.backgroundColor).isEqualTo(R.attr.offStateColor)
-        assertThat(settings.iconTint)
-            .isEqualTo(
-                Utils.getColorAttrDefaultColor(
-                    context,
-                    com.android.internal.R.attr.textColorPrimary,
-                ),
-            )
+        assertThat(settings.iconTint).isNull()
     }
 
     @Test
@@ -116,7 +110,7 @@ class FooterActionsViewModelTest : SysuiTestCase() {
             .isEqualTo(
                 Utils.getColorAttrDefaultColor(
                     context,
-                    com.android.internal.R.attr.textColorPrimaryInverse,
+                    com.android.internal.R.attr.textColorOnAccent,
                 ),
             )
     }
@@ -265,7 +259,6 @@ class FooterActionsViewModelTest : SysuiTestCase() {
         val securityController = FakeSecurityController()
         val fgsManagerController =
             FakeFgsManagerController(
-                isAvailable = true,
                 showFooterDot = false,
                 numRunningPackages = 0,
             )
@@ -383,13 +376,13 @@ class FooterActionsViewModelTest : SysuiTestCase() {
     @Test
     fun isVisible() {
         val underTest = utils.footerActionsViewModel()
-        assertThat(underTest.isVisible.value).isTrue()
-
-        underTest.onVisibilityChangeRequested(visible = false)
         assertThat(underTest.isVisible.value).isFalse()
 
         underTest.onVisibilityChangeRequested(visible = true)
         assertThat(underTest.isVisible.value).isTrue()
+
+        underTest.onVisibilityChangeRequested(visible = false)
+        assertThat(underTest.isVisible.value).isFalse()
     }
 
     @Test

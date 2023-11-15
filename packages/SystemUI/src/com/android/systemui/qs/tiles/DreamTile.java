@@ -47,6 +47,7 @@ import com.android.systemui.plugins.FalsingManager;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.qs.QSHost;
+import com.android.systemui.qs.QsEventLogger;
 import com.android.systemui.qs.SettingObserver;
 import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
@@ -89,6 +90,7 @@ public class DreamTile extends QSTileImpl<QSTile.BooleanState> {
     @Inject
     public DreamTile(
             QSHost host,
+            QsEventLogger uiEventLogger,
             @Background Looper backgroundLooper,
             @Main Handler mainHandler,
             FalsingManager falsingManager,
@@ -104,7 +106,7 @@ public class DreamTile extends QSTileImpl<QSTile.BooleanState> {
             @Named(DreamModule.DREAM_ONLY_ENABLED_FOR_DOCK_USER)
                     boolean dreamOnlyEnabledForDockUser
     ) {
-        super(host, backgroundLooper, mainHandler, falsingManager, metricsLogger,
+        super(host, uiEventLogger, backgroundLooper, mainHandler, falsingManager, metricsLogger,
                 statusBarStateController, activityStarter, qsLogger);
         mDreamManager = dreamManager;
         mBroadcastDispatcher = broadcastDispatcher;
@@ -202,8 +204,7 @@ public class DreamTile extends QSTileImpl<QSTile.BooleanState> {
     public boolean isAvailable() {
         // Only enable for devices that have dreams for the user(s) that can dream.
         return mDreamSupported
-                // TODO(b/257333623): Allow the Dock User to be non-SystemUser user in HSUM.
-                && (!mDreamOnlyEnabledForDockUser || mUserTracker.getUserHandle().isSystem());
+                && (!mDreamOnlyEnabledForDockUser || mUserTracker.getUserInfo().isMain());
     }
 
     @VisibleForTesting
@@ -223,7 +224,8 @@ public class DreamTile extends QSTileImpl<QSTile.BooleanState> {
 
     private ComponentName getActiveDream() {
         try {
-            final ComponentName[] dreams = mDreamManager.getDreamComponents();
+            final ComponentName[] dreams = mDreamManager.getDreamComponentsForUser(
+                                                mUserTracker.getUserId());
             return dreams != null && dreams.length > 0 ? dreams[0] : null;
         } catch (RemoteException e) {
             Log.w(TAG, "Failed to get active dream", e);

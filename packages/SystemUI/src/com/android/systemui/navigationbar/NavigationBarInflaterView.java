@@ -53,11 +53,10 @@ import com.android.systemui.tuner.TunerService;
 import lineageos.providers.LineageSettings;
 
 import java.io.PrintWriter;
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 
-public class NavigationBarInflaterView extends FrameLayout
-        implements NavigationModeController.ModeChangedListener, TunerService.Tunable {
-
+public class NavigationBarInflaterView extends FrameLayout implements TunerService.Tunable {
     private static final String TAG = "NavBarInflater";
 
     public static final String NAV_BAR_VIEWS = "sysui_nav_bar";
@@ -97,6 +96,24 @@ public class NavigationBarInflaterView extends FrameLayout
     private static final String OVERLAY_NAVIGATION_HIDE_HINT =
             "org.lineageos.overlay.customization.navbar.nohint";
 
+    private static class Listener implements NavigationModeController.ModeChangedListener {
+        private final WeakReference<NavigationBarInflaterView> mSelf;
+
+        Listener(NavigationBarInflaterView self) {
+            mSelf = new WeakReference<>(self);
+        }
+
+        @Override
+        public void onNavigationModeChanged(int mode) {
+            NavigationBarInflaterView self = mSelf.get();
+            if (self != null) {
+                self.onNavigationModeChanged(mode);
+            }
+        }
+    }
+
+    private final Listener mListener;
+
     protected LayoutInflater mLayoutInflater;
     protected LayoutInflater mLandscapeInflater;
 
@@ -123,7 +140,8 @@ public class NavigationBarInflaterView extends FrameLayout
         super(context, attrs);
         createInflaters();
         mOverviewProxyService = Dependency.get(OverviewProxyService.class);
-        mNavBarMode = Dependency.get(NavigationModeController.class).addListener(this);
+        mListener = new Listener(this);
+        mNavBarMode = Dependency.get(NavigationModeController.class).addListener(mListener);
     }
 
     @VisibleForTesting
@@ -166,8 +184,7 @@ public class NavigationBarInflaterView extends FrameLayout
         return getContext().getString(defaultResource);
     }
 
-    @Override
-    public void onNavigationModeChanged(int mode) {
+    private void onNavigationModeChanged(int mode) {
         mNavBarMode = mode;
         updateHint();
     }
@@ -181,7 +198,7 @@ public class NavigationBarInflaterView extends FrameLayout
 
     @Override
     protected void onDetachedFromWindow() {
-        Dependency.get(NavigationModeController.class).removeListener(this);
+        Dependency.get(NavigationModeController.class).removeListener(mListener);
         Dependency.get(TunerService.class).removeTunable(this);
         super.onDetachedFromWindow();
     }

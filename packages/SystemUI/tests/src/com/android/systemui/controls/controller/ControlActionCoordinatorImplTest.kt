@@ -29,7 +29,7 @@ import com.android.systemui.plugins.ActivityStarter
 import com.android.systemui.statusbar.VibratorHelper
 import com.android.systemui.statusbar.policy.KeyguardStateController
 import com.android.systemui.util.concurrency.DelayableExecutor
-import com.android.wm.shell.TaskViewFactory
+import com.android.wm.shell.taskview.TaskViewFactory
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -133,16 +133,6 @@ class ControlActionCoordinatorImplTest : SysuiTestCase() {
         verify(coordinator).bouncerOrRun(action)
         verify(activityStarter).dismissKeyguardThenExecute(any(), any(), anyBoolean())
         verify(action, never()).invoke()
-
-        // Simulate a refresh call from a Publisher, which will trigger a call to runPendingAction
-        reset(action)
-        coordinator.runPendingAction(ID)
-        verify(action, never()).invoke()
-
-        `when`(keyguardStateController.isUnlocked()).thenReturn(true)
-        reset(action)
-        coordinator.runPendingAction(ID)
-        verify(action).invoke()
     }
 
     @Test
