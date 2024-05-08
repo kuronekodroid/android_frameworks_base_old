@@ -130,7 +130,6 @@ constructor(
     private val iconContainer: StatusIconContainer = header.findViewById(R.id.statusIcons)
     private val qsCarrierGroup: QSCarrierGroup = header.findViewById(R.id.carrier_group)
 
-    private var roundedCorners = 0
     private var cutout: DisplayCutout? = null
     private var lastInsets: WindowInsets? = null
     private var textColorPrimary = Color.TRANSPARENT
@@ -483,7 +482,6 @@ constructor(
     }
 
     private fun updateResources() {
-        roundedCorners = resources.getDimensionPixelSize(R.dimen.rounded_corner_content_padding)
         val padding = resources.getDimensionPixelSize(R.dimen.qs_panel_padding)
         header.setPadding(padding, header.paddingTop, padding, header.paddingBottom)
         updateQQSPaddings()
