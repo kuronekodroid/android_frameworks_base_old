@@ -1289,14 +1289,9 @@ public class DeviceIdleController extends SystemService
          */
         public boolean USE_WINDOW_ALARMS = DEFAULT_USE_WINDOW_ALARMS;
 
-        private final boolean mSmallBatteryDevice;
-
         public Constants() {
-            mSmallBatteryDevice = ActivityManager.isSmallBatteryDevice();
-            if (mSmallBatteryDevice) {
-                INACTIVE_TIMEOUT = DEFAULT_INACTIVE_TIMEOUT_SMALL_BATTERY;
-                IDLE_AFTER_INACTIVE_TIMEOUT = DEFAULT_IDLE_AFTER_INACTIVE_TIMEOUT_SMALL_BATTERY;
-            }
+            INACTIVE_TIMEOUT = DEFAULT_INACTIVE_TIMEOUT_SMALL_BATTERY;
+            IDLE_AFTER_INACTIVE_TIMEOUT = DEFAULT_IDLE_AFTER_INACTIVE_TIMEOUT_SMALL_BATTERY;
             DeviceConfig.addOnPropertiesChangedListener(DeviceConfig.NAMESPACE_DEVICE_IDLE,
                     JobSchedulerBackgroundThread.getExecutor(), this);
             // Load all the constants.
@@ -1354,9 +1349,7 @@ public class DeviceIdleController extends SystemService
                                     DEFAULT_MIN_DEEP_MAINTENANCE_TIME);
                             break;
                         case KEY_INACTIVE_TIMEOUT:
-                            final long defaultInactiveTimeout = mSmallBatteryDevice
-                                    ? DEFAULT_INACTIVE_TIMEOUT_SMALL_BATTERY
-                                    : DEFAULT_INACTIVE_TIMEOUT;
+                            final long defaultInactiveTimeout = DEFAULT_INACTIVE_TIMEOUT_SMALL_BATTERY;
                             INACTIVE_TIMEOUT = properties.getLong(
                                     KEY_INACTIVE_TIMEOUT, defaultInactiveTimeout);
                             break;
@@ -1382,9 +1375,7 @@ public class DeviceIdleController extends SystemService
                                     DEFAULT_MOTION_INACTIVE_TIMEOUT_FLEX);
                             break;
                         case KEY_IDLE_AFTER_INACTIVE_TIMEOUT:
-                            final long defaultIdleAfterInactiveTimeout = mSmallBatteryDevice
-                                    ? DEFAULT_IDLE_AFTER_INACTIVE_TIMEOUT_SMALL_BATTERY
-                                    : DEFAULT_IDLE_AFTER_INACTIVE_TIMEOUT;
+                            final long defaultIdleAfterInactiveTimeout = DEFAULT_IDLE_AFTER_INACTIVE_TIMEOUT_SMALL_BATTERY;
                             IDLE_AFTER_INACTIVE_TIMEOUT = properties.getLong(
                                     KEY_IDLE_AFTER_INACTIVE_TIMEOUT,
                                     defaultIdleAfterInactiveTimeout);

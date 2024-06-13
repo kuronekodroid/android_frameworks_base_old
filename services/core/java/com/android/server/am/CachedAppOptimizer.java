@@ -266,10 +266,8 @@ public final class CachedAppOptimizer {
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (CACHED_APP_FREEZER_ENABLED_URI.equals(uri)) {
                 synchronized (mPhenotypeFlagLock) {
                     updateUseFreezer();
-                }
             }
         }
     }

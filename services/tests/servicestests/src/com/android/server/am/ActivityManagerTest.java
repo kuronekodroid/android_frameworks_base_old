@@ -364,9 +364,7 @@ public class ActivityManagerTest {
         final MyUidImportanceListener uid2Listener = new MyUidImportanceListener(uid2);
         try {
             if (!freezerWasEnabled) {
-                freezerEnabled = new SettingsSession<>(
-                        Settings.Global.getUriFor(Settings.Global.CACHED_APPS_FREEZER_ENABLED),
-                        Settings.Global::getString, Settings.Global::putString);
+                freezerEnabled = 1;
                 freezerEnabled.set("enabled");
                 Thread.sleep(waitFor);
                 if (!isFreezerEnabled()) {

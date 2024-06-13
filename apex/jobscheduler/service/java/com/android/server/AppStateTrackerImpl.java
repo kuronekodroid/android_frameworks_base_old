@@ -659,11 +659,7 @@ public class AppStateTrackerImpl implements AppStateTracker {
 
     private void updateForceAllAppStandbyState() {
         synchronized (mLock) {
-            if (mForceAllAppStandbyForSmallBattery && isSmallBatteryDevice()) {
-                toggleForceAllAppsStandbyLocked(!mIsPluggedIn);
-            } else {
-                toggleForceAllAppsStandbyLocked(mBatterySaverEnabled);
-            }
+            toggleForceAllAppsStandbyLocked(!mIsPluggedIn);
         }
     }
 

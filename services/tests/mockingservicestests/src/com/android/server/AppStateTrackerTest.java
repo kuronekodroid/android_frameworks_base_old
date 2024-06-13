@@ -1539,9 +1539,6 @@ public class AppStateTrackerTest {
 
     @Test
     public void testSmallBatteryAndPluggedIn() throws Exception {
-        // This is a small battery device
-        mIsSmallBatteryDevice = true;
-
         final AppStateTrackerTestable instance = newInstance();
         callStart(instance);
         assertFalse(instance.isForceAllAppsStandbyEnabled());
@@ -1565,9 +1562,6 @@ public class AppStateTrackerTest {
 
     @Test
     public void testNotSmallBatteryAndPluggedIn() throws Exception {
-        // Not a small battery device, so plugged in status should not affect forced app standby
-        mIsSmallBatteryDevice = false;
-
         final AppStateTrackerTestable instance = newInstance();
         callStart(instance);
         assertFalse(instance.isForceAllAppsStandbyEnabled());
