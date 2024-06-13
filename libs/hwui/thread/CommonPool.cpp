@@ -26,8 +26,6 @@ namespace android {
 namespace uirenderer {
 
 CommonPool::CommonPool() {
-    ATRACE_CALL();
-
     CommonPool* pool = this;
     std::mutex mLock;
     std::vector<int> tids(THREAD_COUNT);

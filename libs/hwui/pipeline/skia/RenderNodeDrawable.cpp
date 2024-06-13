@@ -397,13 +397,6 @@ void RenderNodeDrawable::setViewProperties(const RenderProperties& properties, S
                                              layerBounds.bottom);
             canvas->saveLayerAlpha(&bounds, (int)(properties.getAlpha() * 255));
         }
-
-        if (CC_UNLIKELY(ATRACE_ENABLED() && properties.promotedToLayer())) {
-            // pretend alpha always causes savelayer to warn about
-            // performance problem affecting old versions
-            ATRACE_FORMAT("alpha caused saveLayer %dx%d", properties.getWidth(),
-                          properties.getHeight());
-        }
     }
 
     const SkRect* pendingClip = nullptr;
