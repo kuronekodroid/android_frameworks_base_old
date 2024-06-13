@@ -48,16 +48,6 @@ class QQSGestureListener @Inject constructor(
     private val quickQsOffsetHeight: Int
 
     init {
-        val tunable = Tunable { key: String?, value: String? ->
-            when (key) {
-                DOUBLE_TAP_SLEEP_GESTURE ->
-                    doubleTapToSleepEnabled = TunerService.parseIntegerSwitch(value,
-                            resources.getBoolean(org.lineageos.platform.internal.R.bool.
-                                    config_dt2sGestureEnabledByDefault))
-            }
-        }
-        tunerService.addTunable(tunable, DOUBLE_TAP_SLEEP_GESTURE)
-
         quickQsOffsetHeight = resources.getDimensionPixelSize(
                 com.android.internal.R.dimen.quick_qs_offset_height)
     }
