@@ -39,7 +39,6 @@ cc_defaults {
     ],
 
     cpp_std: "experimental",
-    whole_program_vtables: true,
 
     cflags: [
         "-DEGL_EGLEXT_PROTOTYPES",
@@ -175,6 +174,11 @@ cc_defaults {
     whole_program_vtables: true,
     cflags: [
         "-O3",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-finline-functions",
+        "-ftree-vectorize",
+        "-funroll-loops",
     ],
 }
 

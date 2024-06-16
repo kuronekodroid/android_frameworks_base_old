@@ -84,6 +84,7 @@ void SkiaPipeline::renderLayers(const LightGeometry& lightGeometry,
                                 LayerUpdateQueue* layerUpdateQueue, bool opaque,
                                 const LightInfo& lightInfo) {
     LightingInfo::updateLighting(lightGeometry, lightInfo);
+    ATRACE_NAME("draw layers");
     renderLayersImpl(*layerUpdateQueue, opaque);
     layerUpdateQueue->clear();
 }
@@ -131,6 +132,9 @@ void SkiaPipeline::renderLayersImpl(const LayerUpdateQueue& layers, bool opaque)
             return;
         }
 
+        ATRACE_FORMAT("drawLayer [%s] %.1f x %.1f", layerNode->getName(), bounds.width(),
+                      bounds.height());
+
         layerNode->getSkiaLayer()->hasRenderedSinceRepaint = false;
         layerCanvas->clear(SK_ColorTRANSPARENT);
 
@@ -146,6 +150,7 @@ void SkiaPipeline::renderLayersImpl(const LayerUpdateQueue& layers, bool opaque)
             GrAsDirectContext(layerNode->getLayerSurface()->getCanvas()->recordingContext());
         if (cachedContext.get() != currentContext) {
             if (cachedContext.get()) {
+                ATRACE_NAME("flush layers (context changed)");
                 cachedContext->flushAndSubmit();
             }
             cachedContext.reset(SkSafeRef(currentContext));
@@ -153,6 +158,7 @@ void SkiaPipeline::renderLayersImpl(const LayerUpdateQueue& layers, bool opaque)
     }
 
     if (cachedContext.get()) {
+        ATRACE_NAME("flush layers");
         cachedContext->flushAndSubmit();
     }
 }
@@ -202,6 +208,7 @@ bool SkiaPipeline::createOrUpdateLayer(RenderNode* node, const DamageAccumulator
 void SkiaPipeline::prepareToDraw(const RenderThread& thread, Bitmap* bitmap) {
     GrDirectContext* context = thread.getGrContext();
     if (context && !bitmap->isHardware()) {
+        ATRACE_FORMAT("Bitmap#prepareToDraw %dx%d", bitmap->width(), bitmap->height());
         auto image = bitmap->makeImage();
         if (image.get()) {
             SkImage_pinAsTexture(image.get(), context);
@@ -392,6 +399,7 @@ SkCanvas* SkiaPipeline::tryCapture(SkSurface* surface, RenderNode* root,
 void SkiaPipeline::endCapture(SkSurface* surface) {
     if (CC_LIKELY(mCaptureMode == CaptureMode::None)) { return; }
     mNwayCanvas.reset();
+    ATRACE_CALL();
     if (mCaptureSequence > 0 && mCaptureMode == CaptureMode::MultiFrameSKP) {
         mMultiPic->endPage();
         mCaptureSequence--;

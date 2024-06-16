@@ -121,9 +121,15 @@ IRenderPipeline::DrawResult SkiaOpenGLPipeline::draw(
     }
 
     {
+        ATRACE_NAME("flush commands");
         surface->flushAndSubmit();
     }
     layerUpdateQueue->clear();
+
+    // Log memory statistics
+    if (CC_UNLIKELY(Properties::debugLevel != kDebugDisabled)) {
+        dumpResourceCacheUsage();
+    }
 
     return {true, IRenderPipeline::DrawResult::kUnknownTime};
 }
