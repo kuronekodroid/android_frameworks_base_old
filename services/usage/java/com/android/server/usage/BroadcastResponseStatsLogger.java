@@ -41,8 +41,7 @@ import com.android.server.usage.BroadcastResponseStatsTracker.NotificationEventT
 
 public class BroadcastResponseStatsLogger {
 
-    private static final int MAX_LOG_SIZE =
-            ActivityManager.isLowRamDeviceStatic() ? 20 : 50;
+    private static final int MAX_LOG_SIZE = 20;
 
     private final Object mLock = new Object();
 
