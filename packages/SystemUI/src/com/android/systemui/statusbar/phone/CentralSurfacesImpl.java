@@ -200,6 +200,7 @@ import com.android.systemui.statusbar.KeyguardIndicationController;
 import com.android.systemui.statusbar.LiftReveal;
 import com.android.systemui.statusbar.LightRevealScrim;
 import com.android.systemui.statusbar.LockscreenShadeTransitionController;
+import com.android.systemui.statusbar.NotificationListener;
 import com.android.systemui.statusbar.NotificationLockscreenUserManager;
 import com.android.systemui.statusbar.NotificationMediaManager;
 import com.android.systemui.statusbar.NotificationPresenter;
@@ -207,6 +208,7 @@ import com.android.systemui.statusbar.NotificationRemoteInputManager;
 import com.android.systemui.statusbar.NotificationShadeDepthController;
 import com.android.systemui.statusbar.NotificationShadeWindowController;
 import com.android.systemui.statusbar.NotificationShelfController;
+import com.android.systemui.statusbar.OnGoingActionProgressController;
 import com.android.systemui.statusbar.PowerButtonReveal;
 import com.android.systemui.statusbar.PulseExpansionHandler;
 import com.android.systemui.statusbar.StatusBarState;
@@ -458,6 +460,10 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces, Tune
     private PowerButtonReveal mPowerButtonReveal;
 
     private boolean mWakeUpComingFromTouch;
+
+    private OnGoingActionProgressController mOnGoingActionProgressController = null;
+
+    @Inject public NotificationListener mNotificationListener;
 
     /**
      * Whether we should delay the wakeup animation (which shows the notifications and moves the
@@ -1250,6 +1256,11 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces, Tune
                     mNotificationPanelViewController.updatePanelExpansionAndVisibility();
                     setBouncerShowingForStatusBarComponents(mBouncerShowing);
                     checkBarModes();
+                    mOnGoingActionProgressController =
+                            new OnGoingActionProgressController(
+                                    mContext,
+                                    statusBarViewController.getOngoingActionProgressGroup(),
+                                    mNotificationListener);
                 });
         initializer.initializeStatusBar(mCentralSurfacesComponent);
 
