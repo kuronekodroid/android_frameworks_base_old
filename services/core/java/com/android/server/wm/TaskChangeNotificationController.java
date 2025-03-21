@@ -69,7 +69,6 @@ class TaskChangeNotificationController {
     private final Handler mHandler;
 
     // Task stack change listeners in a remote process.
-    @GuardedBy("mRemoteTaskStackListeners")
     private final RemoteCallbackList<ITaskStackListener> mRemoteTaskStackListeners =
             new RemoteCallbackList<>();
 
@@ -294,9 +293,7 @@ class TaskChangeNotificationController {
                 }
             }
         } else if (listener != null) {
-            synchronized (mRemoteTaskStackListeners) {
-                mRemoteTaskStackListeners.register(listener);
-            }
+            mRemoteTaskStackListeners.register(listener);
         }
     }
 
@@ -306,24 +303,20 @@ class TaskChangeNotificationController {
                 mLocalTaskStackListeners.remove(listener);
             }
         } else if (listener != null) {
-            synchronized (mRemoteTaskStackListeners) {
-                mRemoteTaskStackListeners.unregister(listener);
-            }
+            mRemoteTaskStackListeners.unregister(listener);
         }
     }
 
     private void forAllRemoteListeners(TaskStackConsumer callback, Message message) {
-        synchronized (mRemoteTaskStackListeners) {
-            for (int i = mRemoteTaskStackListeners.beginBroadcast() - 1; i >= 0; i--) {
-                try {
-                    // Make a one-way callback to the listener
-                    callback.accept(mRemoteTaskStackListeners.getBroadcastItem(i), message);
-                } catch (RemoteException e) {
-                    // Handled by the RemoteCallbackList.
-                }
+        for (int i = mRemoteTaskStackListeners.beginBroadcast() - 1; i >= 0; i--) {
+            try {
+                // Make a one-way callback to the listener
+                callback.accept(mRemoteTaskStackListeners.getBroadcastItem(i), message);
+            } catch (RemoteException e) {
+                // Handled by the RemoteCallbackList.
             }
-            mRemoteTaskStackListeners.finishBroadcast();
         }
+        mRemoteTaskStackListeners.finishBroadcast();
     }
 
     private void forAllLocalListeners(TaskStackConsumer callback, Message message) {
