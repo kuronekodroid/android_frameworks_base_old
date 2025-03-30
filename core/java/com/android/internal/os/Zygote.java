@@ -1298,29 +1298,8 @@ public final class Zygote {
             @NonNull ApplicationInfo info,
             @Nullable ProcessInfo processInfo,
             @Nullable IPlatformCompat platformCompat) {
-        // Get the desired tagging level (app manifest + compat features).
-        int level = getRequestedMemtagLevel(info, processInfo, platformCompat);
-
-        // Take into account the hardware capabilities.
-        if (nativeSupportsMemoryTagging()) {
-            // MTE devices can not do TBI, because the Zygote process already has live MTE
-            // allocations. Downgrade TBI to NONE.
-            if (level == MEMORY_TAG_LEVEL_TBI) {
-                level = MEMORY_TAG_LEVEL_NONE;
-            }
-        } else if (nativeSupportsTaggedPointers()) {
-            // TBI-but-not-MTE devices downgrade MTE modes to TBI.
-            // The idea is that if an app opts into full hardware tagging (MTE), it must be ok with
-            // the "fake" pointer tagging (TBI).
-            if (level == MEMORY_TAG_LEVEL_ASYNC || level == MEMORY_TAG_LEVEL_SYNC) {
-                level = MEMORY_TAG_LEVEL_TBI;
-            }
-        } else {
-            // Otherwise disable all tagging.
-            level = MEMORY_TAG_LEVEL_NONE;
-        }
-
-        return level;
+        // Disable all memory tagging
+        return MEMORY_TAG_LEVEL_NONE;
     }
 
     private static int decideGwpAsanLevel(
