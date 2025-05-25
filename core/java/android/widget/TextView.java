@@ -1703,13 +1703,8 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
                 setEllipsize(TextUtils.TruncateAt.END);
                 break;
             case ELLIPSIZE_MARQUEE:
-                if (ViewConfiguration.get(context).isFadingMarqueeEnabled()) {
-                    setHorizontalFadingEdgeEnabled(true);
-                    mMarqueeFadeMode = MARQUEE_FADE_NORMAL;
-                } else {
-                    setHorizontalFadingEdgeEnabled(false);
-                    mMarqueeFadeMode = MARQUEE_FADE_SWITCH_SHOW_ELLIPSIS;
-                }
+                setHorizontalFadingEdgeEnabled(false);
+                mMarqueeFadeMode = MARQUEE_FADE_SWITCH_SHOW_ELLIPSIS;
                 setEllipsize(TextUtils.TruncateAt.MARQUEE);
                 break;
         }
@@ -6474,13 +6469,8 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
 
         if (text instanceof Spanned
                 && ((Spanned) text).getSpanStart(TextUtils.TruncateAt.MARQUEE) >= 0) {
-            if (ViewConfiguration.get(mContext).isFadingMarqueeEnabled()) {
-                setHorizontalFadingEdgeEnabled(true);
-                mMarqueeFadeMode = MARQUEE_FADE_NORMAL;
-            } else {
-                setHorizontalFadingEdgeEnabled(false);
-                mMarqueeFadeMode = MARQUEE_FADE_SWITCH_SHOW_ELLIPSIS;
-            }
+            setHorizontalFadingEdgeEnabled(false);
+            mMarqueeFadeMode = MARQUEE_FADE_SWITCH_SHOW_ELLIPSIS;
             setEllipsize(TextUtils.TruncateAt.MARQUEE);
         }
 
