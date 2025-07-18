@@ -584,9 +584,8 @@ public final class SystemServiceManager implements Dumpable {
     private boolean useThreadPool(int userId, @NonNull String onWhat) {
         switch (onWhat) {
             case USER_STARTING:
-                // Limit the lifecycle parallelization to all users other than the system user
-                // and only for the user start lifecycle phase for now.
-                return sUseLifecycleThreadPool && userId != UserHandle.USER_SYSTEM;
+                // Don't allow lifecycle parallelization for user start
+                return false;
             case USER_COMPLETED_EVENT:
                 return true;
             default:
