@@ -322,7 +322,6 @@ import com.android.server.policy.WindowManagerPolicy;
 import com.android.server.policy.WindowManagerPolicy.ScreenOffListener;
 import com.android.server.power.ShutdownThread;
 import com.android.server.utils.PriorityDump;
-import com.android.server.am.ProcessFreezerManager;
 
 import dalvik.annotation.optimization.NeverCompile;
 
@@ -2768,12 +2767,6 @@ public class WindowManagerService extends IWindowManager.Stub
 
     void finishDrawingWindow(Session session, IWindow client,
             @Nullable SurfaceControl.Transaction postDrawTransaction, int seqId) {
-        //unfreeze process if the first frame appeared
-        ProcessFreezerManager freezer = ProcessFreezerManager.getInstance();
-        if (freezer != null && freezer.useFreezerManager()) {
-            freezer.startUnfreeze(session.mPackageName, ProcessFreezerManager.COMPLETE_LAUNCH_UNFREEZE);
-        }
-
         if (postDrawTransaction != null) {
             postDrawTransaction.sanitize();
         }
