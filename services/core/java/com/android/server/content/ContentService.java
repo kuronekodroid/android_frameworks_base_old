@@ -49,7 +49,6 @@ import android.content.SyncInfo;
 import android.content.SyncRequest;
 import android.content.SyncStatusInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManagerInternal;
 import android.content.pm.ProviderInfo;
 import android.database.IContentObserver;
 import android.database.sqlite.SQLiteException;
@@ -65,7 +64,6 @@ import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.os.ShellCallback;
 import android.os.UserHandle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.ArrayMap;
@@ -87,8 +85,6 @@ import com.android.internal.util.IndentingPrintWriter;
 import com.android.server.LocalServices;
 import com.android.server.SystemService;
 import com.android.server.pm.permission.LegacyPermissionManagerInternal;
-import com.android.server.pm.pkg.AndroidPackage;
-import com.android.server.pm.pkg.PackageState;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -583,14 +579,6 @@ public final class ContentService extends IContentService.Stub {
                 final Key key = collected.keyAt(i);
                 final List<Uri> value = collected.valueAt(i);
 
-                boolean hasSettingsUri = false;
-                for (Uri uri : value) {
-                    if (Settings.AUTHORITY.equals(uri.getAuthority())) {
-                        hasSettingsUri = true;
-                        break;
-                    }
-                }
-
                 final Runnable task = () -> {
                     try {
                         key.observer.onChangeEtc(key.selfChange,
@@ -600,27 +588,12 @@ public final class ContentService extends IContentService.Stub {
                 };
 
                 // Immediately dispatch notifications to foreground apps that
-                // are important to the user and to all system apps if there's at least one changed
-                // settings uri; all other background observers are delayed to avoid stampeding
+                // are important to the user; all other background observers are
+                // delayed to avoid stampeding
                 final boolean noDelay = (key.flags & ContentResolver.NOTIFY_NO_DELAY) != 0;
-                boolean isImmediate = noDelay;
-                if (!isImmediate) {
-                    final int procState = LocalServices.getService(ActivityManagerInternal.class)
+                final int procState = LocalServices.getService(ActivityManagerInternal.class)
                         .getUidProcessState(key.uid);
-                    isImmediate = procState <= ActivityManager.PROCESS_STATE_IMPORTANT_FOREGROUND;
-                }
-                if (hasSettingsUri && !isImmediate) {
-                    var pm = LocalServices.getService(PackageManagerInternal.class);
-                    AndroidPackage pkg = pm.getPackage(key.uid);
-                    if (pkg != null) {
-                        PackageState state = pm.getPackageStateInternal(pkg.getPackageName());
-                        if (state != null && state.isSystem()) {
-                            isImmediate = true;
-                        }
-                    }
-                }
-
-                if (isImmediate) {
+                if (procState <= ActivityManager.PROCESS_STATE_IMPORTANT_FOREGROUND || noDelay) {
                     task.run();
                 } else {
                     BackgroundThread.getHandler().postDelayed(task, BACKGROUND_OBSERVER_DELAY);
