@@ -603,7 +603,6 @@ public final class SystemServer implements Dumpable {
                     System.gc();
                     System.runFinalization();
                     System.gc();
-                    releaseMemory();
                     maxFd = getMaxFd();
                 }
             } catch (Exception e) {
@@ -612,13 +611,6 @@ public final class SystemServer implements Dumpable {
         };
 
         scheduler.scheduleWithFixedDelay(fdCleanerTask, 0, checkInterval, TimeUnit.SECONDS);
-    }
-
-    private static void releaseMemory() {
-        try {
-            android.app.ActivityManager.getService().releaseMemory(900, 20, false, false);
-        } catch (Exception e) {
-        }
     }
 
     /**
