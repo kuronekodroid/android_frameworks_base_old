@@ -4571,6 +4571,11 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
         if (DEBUG_ALL && !mWindowManager.mWindowPlacerLocked.isLayoutDeferred()) {
             Slog.i(TAG, "continueWindowLayout reason=" + mLayoutReasons);
         }
+
+        if (mRootWindowContainer.mTaskLayersChanged
+                && !mWindowManager.mWindowPlacerLocked.isLayoutDeferred()) {
+            mRootWindowContainer.rankTaskLayers();
+        }
     }
 
     /**
