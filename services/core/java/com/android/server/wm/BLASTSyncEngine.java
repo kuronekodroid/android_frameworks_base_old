@@ -404,6 +404,8 @@ class BLASTSyncEngine {
     boolean hasPendingSyncSets() {
         return !mPendingSyncSets.isEmpty();
     }
+<<<<<<< HEAD
+=======
 
     void addOnIdleListener(Runnable onIdleListener) {
         mOnIdleListeners.add(onIdleListener);
@@ -421,4 +423,5 @@ class BLASTSyncEngine {
         }
         return false;
     }
+>>>>>>> 2a48c3b5caff (Optimize the response speed of recents animations)
 }
