@@ -265,10 +265,6 @@ class BLASTSyncEngine {
                 if (!wc.isSyncFinished()) {
                     allFinished = false;
                     Slog.i(TAG, "Unfinished container: " + wc);
-                    ActivityRecord r = wc.asActivityRecord();
-                    if (r != null) {
-                        r.checkSyncTimeout(this);
-                    }
                 }
             }
             if (allFinished && !mReady) {
